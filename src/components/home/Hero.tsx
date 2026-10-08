@@ -5,10 +5,10 @@ import { motion, useScroll, useTransform } from "motion/react";
 import type { HeroVariant } from "@/lib/hero";
 import { ease } from "../Reveal";
 
-export default function Hero({ variant = "current" }: { variant?: HeroVariant }) {
+export default function Hero({ variant = "c" }: { variant?: HeroVariant }) {
   if (variant === "a") return <GalleryHero />;
   if (variant === "b") return <StoneHero />;
-  return <PhotoHero dim={variant === "c"} />;
+  return <PhotoHero />;
 }
 
 function Caption({ light = true, className = "" }: { light?: boolean; className?: string }) {
@@ -30,8 +30,8 @@ function Caption({ light = true, className = "" }: { light?: boolean; className?
   );
 }
 
-// Фото на весь экран, белый логотип поверх. dim — затемнение, чтобы логотип читался
-function PhotoHero({ dim }: { dim: boolean }) {
+// C: фото на весь экран с затемнением, белый логотип поверх
+function PhotoHero() {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 1000], [0, 220]);
   return (
@@ -41,14 +41,8 @@ function PhotoHero({ dim }: { dim: boolean }) {
           <Image src="/img/axis/00.jpg" alt="Стол Axis в интерьере" fill preload sizes="100vw" className="object-cover" />
         </motion.div>
       </motion.div>
-      {dim ? (
-        <>
-          <div className="absolute inset-0 bg-ink/30" />
-          <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-ink/80 via-ink/45 to-transparent" />
-        </>
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/35 via-transparent to-ink/45" />
-      )}
+      <div className="absolute inset-0 bg-ink/30" />
+      <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-ink/80 via-ink/45 to-transparent" />
       <Caption className="absolute inset-x-0 bottom-0 px-5 pb-8 md:px-10" />
     </section>
   );

@@ -16,12 +16,12 @@ const steps = [
   { title: "Доставка", text: "Привозим стол к вам домой." },
 ];
 
-export default function HomeContent({ variant }: { variant: HeroVariant }) {
+export default function HomeContent({ variant, preview = false }: { variant: HeroVariant; preview?: boolean }) {
   const [arbor, noir, colonna, axis] = products;
   return (
     <>
       <Hero variant={variant} />
-      <HeroSwitcher active={variant} />
+      {preview && <HeroSwitcher active={variant} />}
 
       {/* Манифест */}
       <section className="px-5 pt-32 md:px-10 md:pt-44">

@@ -18,7 +18,7 @@ const SMALL = 24; // размер логотипа в шапке, px
 export default function Header() {
   const variant = heroFromPath(usePathname());
   const isHome = variant !== null;
-  const hero = heroVariants[variant ?? "current"];
+  const hero = heroVariants[variant ?? "c"];
   const { scrollY } = useScroll();
   const [vw, setVw] = useState(1440);
   const [vh, setVh] = useState(900);

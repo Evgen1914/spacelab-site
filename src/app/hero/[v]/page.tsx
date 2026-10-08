@@ -9,5 +9,5 @@ export function generateStaticParams() {
 export default async function HeroPreview({ params }: PageProps<"/hero/[v]">) {
   const { v } = await params;
   if (v !== "a" && v !== "b" && v !== "c") notFound();
-  return <HomeContent variant={v} />;
+  return <HomeContent variant={v} preview />;
 }
