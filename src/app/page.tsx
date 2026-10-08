@@ -1,69 +1,129 @@
 import Image from "next/image";
+import Link from "next/link";
+import Hero from "@/components/home/Hero";
+import Interiors from "@/components/home/Interiors";
+import Slabs from "@/components/home/Slabs";
+import ProductCard from "@/components/ProductCard";
+import Reveal, { SplitLines } from "@/components/Reveal";
+import { products } from "@/lib/products";
+
+const steps = [
+  { title: "Выбор", text: "Выберите модель, размер и цвет. Положите в корзину всё, что понравилось." },
+  { title: "Заявка", text: "Оставьте контакты. Заявка сразу приходит менеджеру." },
+  { title: "Детали", text: "Свяжемся с вами, поможем с размером и камнем, согласуем стоимость и сроки." },
+  { title: "Доставка", text: "Привозим стол к вам домой." },
+];
 
 export default function Home() {
+  const [arbor, noir, colonna, axis] = products;
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      <Hero />
+
+      {/* Манифест */}
+      <section className="px-5 pt-32 md:px-10 md:pt-44">
+        <div className="grid gap-10 md:grid-cols-12">
+          <p className="eyebrow text-stone md:col-span-3">Space.Lab</p>
+          <h2 className="font-display text-[clamp(2.4rem,6vw,6rem)] leading-[1.02] md:col-span-9">
+            <SplitLines lines={["Стол — место,", "где собирается", "весь дом"]} />
+          </h2>
+        </div>
+        <div className="mt-14 grid gap-10 md:grid-cols-12">
+          <Reveal className="md:col-span-4 md:col-start-4" delay={0.2}>
+            <p className="text-base leading-relaxed text-stone">
+              Мы делаем обеденные столы из керамогранита, дерева и металла. Простые формы и честные материалы, у каждой
+              модели свой характер.
+            </p>
+          </Reveal>
+          <Reveal className="md:col-span-3 md:col-start-10" delay={0.3}>
+            <Link href="/catalog" className="eyebrow link-line">
+              Вся коллекция →
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Коллекция — журнальная асимметричная сетка */}
+      <section id="collection" className="mt-32 scroll-mt-20 px-5 md:mt-44 md:px-10">
+        <div className="mb-12 flex items-end justify-between border-b border-line pb-5">
+          <h2 className="eyebrow">Коллекция · {products.length} модели</h2>
+          <Link href="/catalog" className="eyebrow link-line text-stone">
+            Каталог
+          </Link>
+        </div>
+        <div className="grid gap-x-6 gap-y-20 md:grid-cols-12">
+          <Reveal className="md:col-span-7">
+            <ProductCard product={axis} aspect="aspect-[4/3]" sizes="(min-width: 768px) 58vw, 100vw" />
+          </Reveal>
+          <Reveal className="md:col-span-4 md:col-start-9 md:mt-48" delay={0.1}>
+            <ProductCard product={colonna} sizes="(min-width: 768px) 33vw, 100vw" />
+          </Reveal>
+          <Reveal className="md:col-span-4 md:col-start-2">
+            <ProductCard product={arbor} sizes="(min-width: 768px) 33vw, 100vw" />
+          </Reveal>
+          <Reveal className="md:col-span-6 md:col-start-7 md:mt-32" delay={0.1}>
+            <ProductCard product={noir} aspect="aspect-square" sizes="(min-width: 768px) 50vw, 100vw" />
+          </Reveal>
+        </div>
+      </section>
+
+      <Interiors />
+
+      {/* Деталь крупно */}
+      <section className="mt-20 grid md:grid-cols-2">
+        <div className="relative aspect-square overflow-hidden md:aspect-auto">
+          <Image src="/img/noir/02.jpg" alt="Опора стола Noir крупным планом" fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
+        </div>
+        <div className="flex flex-col justify-center bg-ink px-8 py-20 text-paper md:px-16">
+          <p className="eyebrow opacity-60">Деталь</p>
+          <h2 className="font-display mt-5 text-[clamp(2rem,4vw,3.6rem)] leading-[1.05]">
+            <SplitLines lines={["Опора как", "скульптура"]} />
+          </h2>
+          <p className="mt-6 max-w-sm text-sm leading-relaxed opacity-70">
+            Скрещённые опоры Noir из шпонированного дерева. Стол, который хочется рассматривать даже без сервировки.
           </p>
+          <Link href="/product/noir" className="eyebrow link-line mt-10 self-start">
+            Смотреть Noir →
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <Slabs />
+
+      {/* Как заказать */}
+      <section id="process" className="mt-40 scroll-mt-20 px-5 md:px-10">
+        <h2 className="font-display text-[clamp(2.2rem,5vw,4.5rem)] leading-none">Как заказать</h2>
+        <ol className="mt-14 grid border-t border-line md:grid-cols-4">
+          {steps.map((s, i) => (
+            <li key={s.title} className="border-b border-line py-8 md:border-r md:border-b-0 md:px-6 md:first:pl-0 md:last:border-r-0">
+              <Reveal delay={i * 0.08}>
+                <span className="font-display text-5xl text-stone/50">{String(i + 1).padStart(2, "0")}</span>
+                <p className="mt-8 text-lg">{s.title}</p>
+                <p className="mt-2 text-sm leading-relaxed text-stone">{s.text}</p>
+              </Reveal>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Реальные фото */}
+      <section className="mt-40 px-5 md:px-10">
+        <div className="grid gap-10 md:grid-cols-12">
+          <div className="md:col-span-4">
+            <p className="eyebrow text-stone">Без ретуши</p>
+            <h2 className="font-display mt-4 text-[clamp(2rem,4vw,3.6rem)] leading-[1.05]">Так столы выглядят у наших клиентов</h2>
+          </div>
+          <div className="grid grid-cols-3 gap-4 md:col-span-8">
+            {["/img/colonna/06.jpg", "/img/colonna/07.jpg", "/img/colonna/08.jpg"].map((src, i) => (
+              <Reveal key={src} delay={i * 0.1} className={i === 1 ? "mt-16" : ""}>
+                <div className="relative aspect-[3/4] overflow-hidden bg-paper-2">
+                  <Image src={src} alt="Стол Colonna у клиента" fill sizes="(min-width: 768px) 22vw, 33vw" className="object-cover" />
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }
