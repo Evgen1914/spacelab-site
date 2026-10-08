@@ -10,12 +10,15 @@ import { useCart } from "@/lib/cart";
 import { useMounted } from "@/lib/useMounted";
 import { products } from "@/lib/products";
 import { ease } from "./Reveal";
+import { heroFromPath, heroVariants } from "@/lib/hero";
 
 const BIG = 0.155; // размер большого логотипа на главной — доля ширины экрана
 const SMALL = 24; // размер логотипа в шапке, px
 
 export default function Header() {
-  const isHome = usePathname() === "/";
+  const variant = heroFromPath(usePathname());
+  const isHome = variant !== null;
+  const hero = heroVariants[variant ?? "current"];
   const { scrollY } = useScroll();
   const [vw, setVw] = useState(1440);
   const [vh, setVh] = useState(900);
@@ -46,9 +49,9 @@ export default function Header() {
   // логотип: на главной огромный поверх первого экрана и сжимается в шапку при прокрутке
   const small = SMALL / (BIG * vw);
   const scale = useTransform(scrollY, [0, vh * 0.55], [1, small], { clamp: true });
-  const top = useTransform(scrollY, [0, vh * 0.55], [vh * 0.62 - BIG * vw * 0.5, 14], { clamp: true });
+  const top = useTransform(scrollY, [0, vh * 0.55], [vh * hero.logoTop - BIG * vw * 0.5, 14], { clamp: true });
 
-  const light = isHome && overHero && !menu;
+  const light = isHome && overHero && !menu && hero.tone === "light";
   const solid = !menu && (!isHome || !overHero);
 
   return (
