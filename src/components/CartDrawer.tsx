@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
 import { useCart } from "@/lib/cart";
+import { rub } from "@/lib/products";
 import { useMounted } from "@/lib/useMounted";
 import { ease } from "./Reveal";
 
@@ -58,6 +59,7 @@ export default function CartDrawer() {
   };
 
   const total = items.reduce((n, i) => n + i.qty, 0);
+  const sum = items.reduce((n, i) => n + (i.price ?? 0) * i.qty, 0);
 
   return (
     <AnimatePresence>
@@ -120,6 +122,7 @@ export default function CartDrawer() {
                           ))}
                         </dl>
                         <div className="mt-auto flex items-center gap-4 pt-3 text-sm">
+                          {item.price && <span className="font-display order-last ml-auto text-base">{rub(item.price * item.qty)}</span>}
                           <button aria-label="Меньше" onClick={() => setQty(item.key, item.qty - 1)} className="h-7 w-7 border border-line hover:border-ink">
                             −
                           </button>
@@ -133,8 +136,14 @@ export default function CartDrawer() {
                   ))}
                 </ul>
                 <div className="border-t border-line p-6">
+                  {sum > 0 && (
+                    <div className="mb-4 flex items-baseline justify-between">
+                      <span className="eyebrow">Итого</span>
+                      <span className="font-display text-2xl">{rub(sum)}</span>
+                    </div>
+                  )}
                   <p className="mb-5 text-xs leading-relaxed text-stone">
-                    Это заявка, а не оплата. Менеджер свяжется с вами, уточнит размеры, цвет, сроки и стоимость доставки.
+                    Это заявка, а не оплата. Менеджер свяжется с вами, уточнит размер, цвет и сроки и рассчитает доставку.
                   </p>
                   <button onClick={() => setStep("form")} className="eyebrow w-full bg-ink py-5 text-paper transition-opacity hover:opacity-85">
                     Оформить заявку

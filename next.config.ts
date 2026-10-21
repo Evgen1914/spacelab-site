@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: root,
   cacheComponents: true,
   partialPrefetching: true,
+  // старые названия моделей (до каталога homeb) — ведём на новые страницы
+  async redirects() {
+    return [
+      { source: "/product/arbor", destination: "/product/scandi", permanent: true },
+      { source: "/product/noir", destination: "/product/duna", permanent: true },
+      { source: "/product/colonna", destination: "/product/kona", permanent: true },
+    ];
+  },
   turbopack: {
     root,
     rules: {

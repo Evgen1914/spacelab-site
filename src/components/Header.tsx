@@ -12,8 +12,9 @@ import { products } from "@/lib/products";
 import { ease } from "./Reveal";
 import { heroFromPath, heroVariants } from "@/lib/hero";
 
-const BIG = 0.155; // размер большого логотипа на главной — доля ширины экрана
-const SMALL = 24; // размер логотипа в шапке, px
+const BIG = 0.6; // ширина большого логотипа на главной — доля ширины экрана
+const SMALL = 96; // ширина логотипа в шапке, px
+const RATIO = 286 / 1200; // высота логотипа к ширине
 
 export default function Header() {
   const variant = heroFromPath(usePathname());
@@ -49,7 +50,9 @@ export default function Header() {
   // логотип: на главной огромный поверх первого экрана и сжимается в шапку при прокрутке
   const small = SMALL / (BIG * vw);
   const scale = useTransform(scrollY, [0, vh * 0.55], [1, small], { clamp: true });
-  const top = useTransform(scrollY, [0, vh * 0.55], [vh * hero.logoTop - BIG * vw * 0.5, 14], { clamp: true });
+  const top = useTransform(scrollY, [0, vh * 0.55], [vh * hero.logoTop - BIG * vw * RATIO * 0.5, 28 - SMALL * RATIO * 0.5], {
+    clamp: true,
+  });
 
   const light = isHome && overHero && !menu && hero.tone === "light";
   const solid = !menu && (!isHome || !overHero);
@@ -76,23 +79,17 @@ export default function Header() {
         </div>
       </header>
 
-      <Link href="/" aria-label="Space.Lab — на главную" onClick={() => setMenu(false)}>
+      <Link href="/" aria-label="homeb — на главную" onClick={() => setMenu(false)}>
         {isHome && !menu ? (
           <motion.span
-            style={{ scale, top, x: "-50%", fontSize: `${BIG * 100}vw` }}
-            className={`font-logo fixed left-1/2 z-50 origin-top leading-none tracking-[0.02em] whitespace-nowrap transition-colors duration-500 ${
-              light ? "text-paper" : "text-ink"
-            }`}
-          >
-            SPACE.LAB
-          </motion.span>
+            style={{ scale, top, x: "-50%", width: `${BIG * 100}vw` }}
+            className={`logo fixed left-1/2 z-50 origin-top transition-colors duration-500 ${light ? "text-paper" : "text-ink"}`}
+          />
         ) : (
           <span
-            style={{ fontSize: SMALL }}
-            className="font-logo fixed top-[14px] left-1/2 z-50 -translate-x-1/2 leading-none tracking-[0.02em] text-ink"
-          >
-            SPACE.LAB
-          </span>
+            style={{ width: SMALL, top: 28 - SMALL * RATIO * 0.5 }}
+            className="logo fixed left-1/2 z-50 -translate-x-1/2 text-ink"
+          />
         )}
       </Link>
 
@@ -102,10 +99,11 @@ export default function Header() {
 }
 
 const links = [
-  { href: "/catalog", label: "Все столы", image: "/img/axis/00.jpg" },
+  { href: "/catalog", label: "Все столы", image: "/img/axis/black-room-2.jpg" },
   ...products.map((p) => ({ href: `/product/${p.slug}`, label: p.name, image: p.images[0] })),
-  { href: "/#materials", label: "Столешницы", image: "/img/slabs/patagonia.jpg" },
-  { href: "/#process", label: "Как заказать", image: "/img/colonna/03.jpg" },
+  { href: "/catalog#prices", label: "Цены", image: "/img/duna/cross.jpg" },
+  { href: "/#materials", label: "Столешницы", image: "/img/kona/column.jpg" },
+  { href: "/#process", label: "Как заказать", image: "/img/scandi/walnut-top.jpg" },
 ];
 
 function Menu({ close }: { close: () => void }) {

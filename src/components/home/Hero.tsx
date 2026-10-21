@@ -21,7 +21,8 @@ function Caption({ light = true, className = "" }: { light?: boolean; className?
     >
       <div>
         <p className="eyebrow opacity-80">Коллекция 2026</p>
-        <p className="font-display mt-2 text-2xl md:text-3xl">Обеденные столы</p>
+        <p className="font-display mt-2 text-2xl italic md:text-3xl">обеденные столы</p>
+        <p className="eyebrow mt-3 opacity-70">Керамогранит · дерево · металл</p>
       </div>
       <a href="#collection" className="eyebrow link-line">
         Смотреть ↓
@@ -38,7 +39,7 @@ function PhotoHero() {
     <section className="relative h-[100svh] overflow-hidden bg-ink">
       <motion.div className="absolute inset-0" style={{ y }}>
         <motion.div className="absolute inset-0" initial={{ scale: 1.15 }} animate={{ scale: 1 }} transition={{ duration: 2.4, ease }}>
-          <Image src="/img/axis/00.jpg" alt="Стол Axis в интерьере" fill preload sizes="100vw" className="object-cover" />
+          <Image src="/img/kona/room.jpg" alt="Стол Kona в интерьере" fill preload sizes="100vw" className="object-cover object-[50%_65%]" />
         </motion.div>
       </motion.div>
       <div className="absolute inset-0 bg-ink/30" />
@@ -53,7 +54,7 @@ function GalleryHero() {
   const { scrollY } = useScroll();
   const scale = useTransform(scrollY, [0, 900], [1, 1.12]);
   return (
-    <section className="flex h-[100svh] flex-col bg-paper px-5 pb-6 pt-[calc(15.5vw+18vh)] md:px-10 md:pt-[calc(15.5vw+9vh)]">
+    <section className="flex h-[100svh] flex-col bg-paper px-5 pb-6 pt-[calc(14.3vw+18vh)] md:px-10 md:pt-[calc(14.3vw+9vh)]">
       <motion.div
         initial={{ clipPath: "inset(100% 0 0 0)" }}
         animate={{ clipPath: "inset(0% 0 0 0)" }}
@@ -61,7 +62,7 @@ function GalleryHero() {
         className="relative flex-1 overflow-hidden"
       >
         <motion.div className="absolute inset-0" style={{ scale }}>
-          <Image src="/img/noir/04.jpg" alt="Стол Noir в интерьере" fill preload sizes="100vw" className="object-cover object-[50%_60%]" />
+          <Image src="/img/axis/black-room-2.jpg" alt="Стол Axis в интерьере" fill preload sizes="100vw" className="object-cover object-[50%_60%]" />
         </motion.div>
       </motion.div>
       <Caption light={false} className="pt-5" />
@@ -84,7 +85,7 @@ function StoneHero() {
         transition={{ duration: 1.4, ease, delay: 0.5 }}
         className="absolute bottom-32 left-1/2 aspect-[4/3] w-[86vw] overflow-hidden shadow-2xl md:bottom-16 md:w-[36vw]"
       >
-        <Image src="/img/axis/01.jpg" alt="Стол Axis в интерьере" fill sizes="(min-width: 768px) 36vw, 78vw" className="object-cover" />
+        <Image src="/img/axis/beige-room-2.jpg" alt="Стол Axis в интерьере" fill sizes="(min-width: 768px) 36vw, 78vw" className="object-cover" />
       </motion.div>
       <Caption className="absolute inset-x-0 bottom-0 px-5 pb-8 md:px-10" />
     </section>

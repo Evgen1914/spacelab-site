@@ -8,6 +8,7 @@ export type CartItem = {
   slug: string;
   name: string;
   image: string;
+  price?: number;
   options: { label: string; value: string }[];
   qty: number;
 };
@@ -47,6 +48,6 @@ export const useCart = create<CartState>()(
       remove: (key) => set((s) => ({ items: s.items.filter((i) => i.key !== key) })),
       clear: () => set({ items: [] }),
     }),
-    { name: "spacelab-cart", partialize: (s) => ({ items: s.items }) },
+    { name: "homeb-cart", partialize: (s) => ({ items: s.items }) },
   ),
 );

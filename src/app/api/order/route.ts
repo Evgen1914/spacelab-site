@@ -5,14 +5,16 @@
 // TELEGRAM_API_BASE — адрес Cloudflare-релея, если хостинг блокирует api.telegram.org
 // RESEND_API_KEY, ORDER_EMAIL_TO, ORDER_EMAIL_FROM — дубль заявки на почту через Resend
 
-type Item = { name: string; qty: number; options: { label: string; value: string }[] };
+type Item = { name: string; qty: number; price?: number; options: { label: string; value: string }[] };
 type Order = { name?: string; phone?: string; email?: string; contact?: string; comment?: string; items?: Item[] };
+
+const rub = (n: number) => `${n.toLocaleString("ru-RU")} ₽`;
 
 const esc = (s: string) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]!);
 
 function format(o: Order) {
   const items = (o.items ?? [])
-    .map((i, n) => `${n + 1}. <b>${esc(i.name)}</b> × ${i.qty}\n${i.options.map((x) => `   ${esc(x.label)}: ${esc(x.value)}`).join("\n")}`)
+    .map((i, n) => `${n + 1}. <b>${esc(i.name)}</b> × ${i.qty}${i.price ? ` — ${rub(i.price * i.qty)}` : ""}\n${i.options.map((x) => `   ${esc(x.label)}: ${esc(x.value)}`).join("\n")}`)
     .join("\n\n");
   const contacts = [
     `Имя: ${esc(o.name ?? "")}`,
@@ -21,7 +23,8 @@ function format(o: Order) {
     `Связаться: ${esc(o.contact ?? "")}`,
     o.comment && `Комментарий: ${esc(o.comment)}`,
   ].filter(Boolean);
-  return ["🪑 <b>Новая заявка Space.Lab</b>", contacts.join("\n"), items].join("\n\n");
+  const sum = (o.items ?? []).reduce((n, i) => n + (i.price ?? 0) * i.qty, 0);
+  return ["🪑 <b>Новая заявка homeb</b>", contacts.join("\n"), items, sum ? `<b>Итого: ${rub(sum)}</b>` : ""].filter(Boolean).join("\n\n");
 }
 
 export async function POST(req: Request) {
@@ -51,9 +54,9 @@ export async function POST(req: Request) {
         method: "POST",
         headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: ORDER_EMAIL_FROM || "Space.Lab <onboarding@resend.dev>",
+          from: ORDER_EMAIL_FROM || "homeb <onboarding@resend.dev>",
           to: ORDER_EMAIL_TO,
-          subject: `Заявка Space.Lab — ${order.name}`,
+          subject: `Заявка homeb — ${order.name}`,
           html: text.replace(/\n/g, "<br>"),
         }),
       }),

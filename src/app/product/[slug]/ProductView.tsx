@@ -5,29 +5,37 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
-import { formatPrice, type Product } from "@/lib/products";
+import { rub, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ease } from "@/components/Reveal";
 
 export default function ProductView({ product }: { product: Product }) {
-  const [color, setColor] = useState(product.colors?.options[0]);
-  const [top, setTop] = useState(product.tops?.options[0]);
+  const [color, setColor] = useState(product.colors.options[0]);
+  const [variant, setVariant] = useState(product.variants?.[0]);
   const [size, setSize] = useState(product.sizes[0]);
   const [zoom, setZoom] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
   const add = useCart((s) => s.add);
 
-  // фото выбранного цвета идут первыми, остальные — после
-  const images = color?.images ? [...color.images, ...product.images.filter((i) => !color.images!.includes(i))] : product.images;
-  const gallery = product.drawing ? [...images, product.drawing] : images;
+  // фото выбранного варианта или цвета идут первыми, остальные — после, чертёж в конце
+  const first = variant ? [variant.image] : (color.images ?? []);
+  const gallery = [...first, ...product.images.filter((i) => !first.includes(i)), product.drawing];
+  const flat = (src: string) => src === product.drawing || src === product.cutout || src.includes("/v-");
 
   const addToCart = () => {
     const options = [
-      ...(size ? [{ label: "Размер", value: `${size} см` }] : []),
-      ...(color && product.colors ? [{ label: product.colors.label, value: color.name }] : []),
-      ...(top && product.tops ? [{ label: product.tops.label, value: top.name }] : []),
+      { label: "Размер", value: `${size.size} мм` },
+      ...(variant
+        ? [
+            { label: "Столешница", value: `${variant.top}, ${variant.finish}` },
+            { label: "Основание", value: variant.base },
+          ]
+        : [
+            { label: "Столешница", value: product.top.name },
+            { label: product.colors.label, value: color.name },
+          ]),
     ];
-    add({ slug: product.slug, name: product.name, image: images[0], options });
+    add({ slug: product.slug, name: product.name, image: gallery[0], price: size.price, options });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -47,17 +55,19 @@ export default function ProductView({ product }: { product: Product }) {
               transition={{ duration: 0.6, ease }}
               onClick={() => setZoom(src)}
               data-cursor="Увеличить"
-              className={`relative w-[88vw] shrink-0 snap-start overflow-hidden bg-paper-2 md:w-auto ${
-                i === 0 ? "aspect-[4/5] md:col-span-2 md:aspect-[4/3]" : "aspect-[4/5]"
-              } ${src === product.drawing ? "bg-white" : ""}`}
+              className={`relative w-[88vw] shrink-0 snap-start overflow-hidden md:w-auto ${
+                i === 0 || src === product.drawing ? "aspect-[4/5] md:col-span-2 md:aspect-[4/3]" : "aspect-[4/5]"
+              } ${src === product.drawing ? "bg-white" : "bg-paper-2"}`}
             >
               <Image
                 src={src}
-                alt={`${product.name} — фото ${i + 1}`}
+                alt={src === product.drawing ? `${product.name} — чертёж с размерами` : `${product.name} — фото ${i + 1}`}
                 fill
                 preload={i === 0}
                 sizes={i === 0 ? "(min-width: 768px) 58vw, 88vw" : "(min-width: 768px) 29vw, 88vw"}
-                className={src === product.drawing ? "object-contain p-6" : "object-cover"}
+                className={
+                  src === product.drawing ? "object-contain p-8 md:p-14" : flat(src) ? "object-contain p-6 mix-blend-multiply" : "object-cover"
+                }
               />
             </motion.button>
           ))}
@@ -75,67 +85,91 @@ export default function ProductView({ product }: { product: Product }) {
           </nav>
           <div className="flex items-baseline gap-4">
             <span className="eyebrow text-stone">{product.index}</span>
-            {product.badge && <span className="eyebrow text-clay">{product.badge}</span>}
+            {product.badge && <span className="eyebrow bg-clay px-2 py-1 text-[10px] text-paper">Самая популярная</span>}
           </div>
           <h1 className="font-display mt-3 text-[clamp(3rem,5vw,4.5rem)] leading-none">{product.name}</h1>
-          <p className="mt-3 text-sm text-stone">
-            {product.type} · {product.tagline}
-          </p>
-          <p className="mt-6 text-lg">{formatPrice(product.price)}</p>
+          <p className="font-display mt-2 text-lg text-stone italic">{product.type}</p>
+          <div className="mt-6 flex items-baseline justify-between gap-4">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.p
+                key={size.price}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3, ease }}
+                className="font-display text-3xl"
+              >
+                {rub(size.price)}
+              </motion.p>
+            </AnimatePresence>
+            <span className="text-xs text-stone">за стол, без стульев</span>
+          </div>
 
-          {product.colors && color && (
-            <Option label={product.colors.label} value={color.name}>
-              <div className="flex gap-3">
-                {product.colors.options.map((o) => (
-                  <button
-                    key={o.id}
-                    aria-label={o.name}
-                    onClick={() => setColor(o)}
-                    className={`rounded-full p-[3px] ring-1 transition-all ${color.id === o.id ? "ring-ink" : "ring-transparent hover:ring-line"}`}
-                  >
-                    <span className="block h-8 w-8 rounded-full" style={{ background: o.hex }} />
-                  </button>
-                ))}
-              </div>
-            </Option>
-          )}
+          <Option label="Размер, Д × Ш × В" value={size.seats}>
+            <div className="border-t border-ink">
+              {product.sizes.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setSize(s)}
+                  className={`grid w-full grid-cols-[1.4fr_1fr_auto] items-baseline gap-3 border-b border-line px-3 py-3.5 text-left text-sm transition-colors ${
+                    size.id === s.id ? "bg-ink text-paper" : "hover:bg-paper-2"
+                  }`}
+                >
+                  <span>
+                    {s.size} <span className="text-[11px] opacity-60">мм</span>
+                  </span>
+                  <span className="text-xs opacity-60">{s.seats}</span>
+                  <span className="font-display text-base">{rub(s.price)}</span>
+                </button>
+              ))}
+            </div>
+          </Option>
 
-          {product.tops && top && (
-            <Option label={product.tops.label} value={top.name}>
-              <div className="flex gap-2">
-                {product.tops.options.map((o) => (
+          {variant && product.variants ? (
+            <Option label="Сочетание" value={`${variant.top} · ${variant.finish} · основание ${variant.base}`}>
+              <div className="grid grid-cols-3 gap-2">
+                {product.variants.map((v) => (
                   <button
-                    key={o.id}
-                    aria-label={o.name}
-                    onClick={() => setTop(o)}
-                    className={`relative h-16 w-14 overflow-hidden ring-1 ring-offset-2 ring-offset-paper transition-all ${
-                      top.id === o.id ? "ring-ink" : "ring-transparent hover:ring-line"
+                    key={v.id}
+                    aria-label={`${v.top}, ${v.finish}, основание ${v.base}`}
+                    onClick={() => setVariant(v)}
+                    className={`relative aspect-[7/4] overflow-hidden bg-paper-2 ring-1 ring-offset-2 ring-offset-paper transition-all ${
+                      variant.id === v.id ? "ring-ink" : "ring-transparent hover:ring-line"
                     }`}
                   >
-                    <Image src={o.texture!} alt="" fill sizes="56px" className="object-cover" />
+                    <Image src={v.image} alt="" fill sizes="120px" className="object-contain mix-blend-multiply" />
                   </button>
                 ))}
               </div>
-              {product.tops.note && <p className="mt-3 text-xs text-stone">{product.tops.note}</p>}
-            </Option>
-          )}
-
-          {product.sizes.length > 0 ? (
-            <Option label="Размер, см" value="Д × Ш × В">
-              <div className="flex flex-wrap gap-2">
-                {product.sizes.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setSize(s)}
-                    className={`border px-4 py-2.5 text-sm transition-colors ${size === s ? "border-ink bg-ink text-paper" : "border-line hover:border-ink"}`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
+              <p className="mt-3 text-xs text-stone">Другое сочетание камня и основания уточните у менеджера при заказе.</p>
             </Option>
           ) : (
-            <p className="mt-8 text-sm text-stone">Размер подберём под ваше помещение — укажите пожелания в заявке.</p>
+            <>
+              <Option label="Столешница" value={product.top.name}>
+                <div className="flex items-center gap-3">
+                  {product.top.texture && (
+                    <span className="relative block h-12 w-16 overflow-hidden ring-1 ring-line">
+                      <Image src={product.top.texture} alt="" fill sizes="64px" className="object-cover" />
+                    </span>
+                  )}
+                  <span className="font-display text-sm text-stone italic">{product.top.note}</span>
+                </div>
+              </Option>
+              <Option label={product.colors.label} value={[color.name, color.note].filter(Boolean).join(", ")}>
+                <div className="flex gap-3">
+                  {product.colors.options.map((o) => (
+                    <button
+                      key={o.id}
+                      aria-label={o.name}
+                      onClick={() => setColor(o)}
+                      className={`rounded-full p-[3px] ring-1 transition-all ${color.id === o.id ? "ring-ink" : "ring-transparent hover:ring-line"}`}
+                    >
+                      <span className="block h-8 w-8 rounded-full ring-1 ring-black/5" style={{ background: o.hex }} />
+                    </button>
+                  ))}
+                </div>
+              </Option>
+            </>
           )}
 
           <button onClick={addToCart} className="eyebrow relative mt-10 w-full overflow-hidden bg-ink py-5 text-paper">
@@ -156,7 +190,12 @@ export default function ProductView({ product }: { product: Product }) {
 
           <div className="mt-12 border-t border-line">
             <Accordion title="Описание" defaultOpen>
-              <p>{product.description}</p>
+              <p className="font-display italic">{product.lead}</p>
+              {product.description.map((d) => (
+                <p key={d} className="mt-3">
+                  {d}
+                </p>
+              ))}
             </Accordion>
             <Accordion title="Материалы и характеристики">
               <dl className="space-y-2">
@@ -236,7 +275,7 @@ function Lightbox({ src, close }: { src: string | null; close: () => void }) {
           className="fixed inset-0 z-[80] bg-paper"
         >
           <motion.div initial={{ scale: 0.94 }} animate={{ scale: 1 }} transition={{ duration: 0.6, ease }} className="absolute inset-6 md:inset-12">
-            <Image src={src} alt="" fill sizes="100vw" className="object-contain" />
+            <Image src={src} alt="" fill sizes="100vw" className="object-contain mix-blend-multiply" />
           </motion.div>
           <button className="eyebrow link-line absolute top-5 right-5">Закрыть</button>
         </motion.div>

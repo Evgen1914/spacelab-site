@@ -6,7 +6,7 @@ export default function Footer() {
     <footer id="contacts" className="mt-32 border-t border-line px-5 pt-16 md:px-10">
       <div className="grid gap-12 md:grid-cols-4">
         <div className="md:col-span-2">
-          <p className="font-display max-w-md text-3xl leading-tight">Поможем выбрать стол под ваш интерьер и размер комнаты.</p>
+          <p className="font-display max-w-md text-3xl leading-tight">Подберём модель, размер и цвет под ваше пространство.</p>
         </div>
         <div>
           <p className="eyebrow mb-5 text-stone">Коллекция</p>
@@ -30,12 +30,10 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <p aria-hidden className="font-logo mt-24 mb-6 text-center text-[15.5vw] leading-none tracking-[0.02em] select-none">
-        SPACE.LAB
-      </p>
-      <div className="eyebrow flex justify-between border-t border-line py-5 text-stone">
-        <span>© 2026 Space.Lab</span>
-        <span>Обеденные столы</span>
+      <span aria-hidden className="logo mx-auto mt-24 mb-8 w-full max-w-[1400px] text-ink" />
+      <div className="eyebrow flex flex-wrap justify-between gap-x-6 gap-y-2 border-t border-line py-5 text-stone">
+        <span>© 2026 homeb</span>
+        <span>Керамогранит · дерево · металл</span>
       </div>
     </footer>
   );

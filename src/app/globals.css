@@ -2,12 +2,12 @@
 @import "lenis/dist/lenis.css";
 
 :root {
-  --paper: #f5f2ed;
-  --paper-2: #ebe6de;
-  --ink: #1b1a17;
-  --stone: #857f75;
-  --line: #d9d3c9;
-  --clay: #9a6b4f;
+  --paper: #f8f6f2;
+  --paper-2: #efebe4;
+  --ink: #1f1d1b;
+  --stone: #85807a;
+  --line: #dcd7cf;
+  --clay: #a08259; /* золотисто-коричневый из каталога — плашка «Хит» */
 }
 
 @theme inline {
@@ -17,9 +17,8 @@
   --color-stone: var(--stone);
   --color-line: var(--line);
   --color-clay: var(--clay);
-  --font-sans: var(--font-onest);
-  --font-display: var(--font-prata);
-  --font-logo: var(--font-bodoni);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-playfair);
 }
 
 html {
@@ -29,7 +28,7 @@ html {
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-onest), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
 }
@@ -37,6 +36,15 @@ body {
 ::selection {
   background: var(--ink);
   color: var(--paper);
+}
+
+/* логотип homeb — PNG как маска, цвет берётся из currentColor */
+.logo {
+  display: block;
+  aspect-ratio: 1200 / 286;
+  background: currentColor;
+  -webkit-mask: url("/brand/homeb.png") center / contain no-repeat;
+  mask: url("/brand/homeb.png") center / contain no-repeat;
 }
 
 /* мелкие подписи в духе Zara Home */

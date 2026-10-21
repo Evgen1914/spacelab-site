@@ -22,8 +22,9 @@ export default function Catalog() {
   return (
     <div className="px-5 pt-28 md:px-10 md:pt-36">
       <h1 className="font-display text-[clamp(2.6rem,7vw,7rem)] leading-none">
-        <SplitLines lines={["Обеденные столы"]} />
+        <SplitLines lines={["Коллекция"]} />
       </h1>
+      <p className="font-display mt-4 text-lg text-stone italic">четыре модели обеденных столов</p>
 
       <div className="sticky top-14 z-30 -mx-5 mt-12 flex items-center justify-between gap-6 border-y border-line bg-paper/85 px-5 py-3 backdrop-blur-md md:-mx-10 md:px-10">
         <div className="flex gap-5 overflow-x-auto">
@@ -60,12 +61,15 @@ export default function Catalog() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.7, ease }}
             >
-              <ProductCard product={p} aspect={cols === 2 ? "aspect-[4/5]" : "aspect-[3/4]"} sizes={cols === 2 ? "(min-width: 768px) 50vw, 100vw" : "25vw"} />
+              <ProductCard product={p} studio aspect={cols === 2 ? "aspect-[4/3]" : "aspect-square"} sizes={cols === 2 ? "(min-width: 768px) 50vw, 100vw" : "25vw"} />
             </motion.div>
           ))}
         </AnimatePresence>
       </motion.div>
-      <p className="eyebrow mt-16 text-stone">Показано: {list.length}</p>
+      <div className="mt-16 flex flex-wrap items-baseline justify-between gap-4">
+        <p className="eyebrow text-stone">Показано: {list.length}</p>
+        <p className="font-display text-stone italic">Размер, цвет основания и столешницы подберём под ваше пространство.</p>
+      </div>
     </div>
   );
 }

@@ -4,16 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
-import { getProduct } from "@/lib/products";
+import { formatFrom, getProduct } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ease } from "../Reveal";
 
 // Интерьеры с точками на мебели (shop the look). Координаты точки — в процентах от фото.
 const looks = [
-  { image: "/img/colonna/04.jpg", title: "Светлая гостиная", slug: "colonna", dot: { x: 55, y: 52 } },
-  { image: "/img/noir/04.jpg", title: "Графичная столовая", slug: "noir", dot: { x: 51, y: 51 } },
-  { image: "/img/arbor/06.jpg", title: "Тёплый минимализм", slug: "arbor", dot: { x: 51, y: 50 } },
-  { image: "/img/axis/01.jpg", title: "Спокойный графит", slug: "axis", dot: { x: 50, y: 42 } },
+  { image: "/img/scandi/walnut-room.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 36, y: 53 } },
+  { image: "/img/kona/room-2.jpg", title: "Светлая гостиная", slug: "kona", dot: { x: 55, y: 52 } },
+  { image: "/img/duna/top.jpg", title: "Графичная столовая", slug: "duna", dot: { x: 42, y: 45 } },
+  { image: "/img/axis/black-room.jpg", title: "Спокойный графит", slug: "axis", dot: { x: 50, y: 42 } },
 ];
 
 export default function Interiors() {
@@ -75,12 +75,12 @@ function Look({ look, index }: { look: (typeof looks)[number]; index: number }) 
               transition={{ duration: 0.45, ease }}
               className="absolute right-4 bottom-4 flex w-80 gap-4 bg-paper p-3"
             >
-              <div className="relative aspect-square w-20 shrink-0 overflow-hidden">
-                <Image src={product.images[0]} alt="" fill sizes="80px" className="object-cover" />
+              <div className="relative aspect-square w-20 shrink-0 overflow-hidden bg-paper-2">
+                <Image src={product.cutout} alt="" fill sizes="80px" className="object-contain mix-blend-multiply" />
               </div>
               <div className="flex flex-col">
                 <span className="font-display text-lg leading-tight">{product.name}</span>
-                <span className="text-[11px] text-stone">{product.type}</span>
+                <span className="text-[11px] text-stone">{formatFrom(product)}</span>
                 <div className="mt-auto flex gap-4 pt-2 whitespace-nowrap">
                   <Link href={`/product/${product.slug}`} className="eyebrow link-line">
                     Подробнее
@@ -90,7 +90,7 @@ function Look({ look, index }: { look: (typeof looks)[number]; index: number }) 
                       add({
                         slug: product.slug,
                         name: product.name,
-                        image: product.images[0],
+                        image: product.cutout,
                         options: [{ label: "Вариант", value: "как на фото" }],
                       })
                     }
