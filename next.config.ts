@@ -10,6 +10,19 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: root,
   cacheComponents: true,
   partialPrefetching: true,
+  // картинки нарезаны заранее (npm run images) — сервер их не пережимает, а отдаёт готовые webp
+  images: {
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
+    deviceSizes: [480, 828, 1200, 1920],
+    imageSizes: [128, 256],
+  },
+  async headers() {
+    return [
+      { source: "/img-opt/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=2592000, stale-while-revalidate=86400" }] },
+      { source: "/brand/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=2592000" }] },
+    ];
+  },
   // старые названия моделей (до каталога homeb) — ведём на новые страницы
   async redirects() {
     return [
