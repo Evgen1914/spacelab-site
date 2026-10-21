@@ -5,10 +5,11 @@ import HeroSwitcher from "@/components/home/HeroSwitcher";
 import type { HeroVariant } from "@/lib/hero";
 import Interiors from "@/components/home/Interiors";
 import Slabs from "@/components/home/Slabs";
+import AxisVariants from "@/components/home/AxisVariants";
 import Compare from "@/components/Compare";
 import ProductCard from "@/components/ProductCard";
 import Reveal, { SplitLines } from "@/components/Reveal";
-import { getProduct, products } from "@/lib/products";
+import { products } from "@/lib/products";
 
 const stats = [
   { value: "12 мм", text: "керамогранит во всех моделях" },
@@ -25,7 +26,6 @@ const steps = [
 
 export default function HomeContent({ variant, preview = false }: { variant: HeroVariant; preview?: boolean }) {
   const [scandi, duna, kona, axis] = products;
-  const axisDetail = getProduct("axis")!.detail;
   return (
     <>
       <Hero variant={variant} />
@@ -111,34 +111,8 @@ export default function HomeContent({ variant, preview = false }: { variant: Her
         </div>
       </section>
 
-      {/* Axis: два цвета основания */}
-      <section className="mt-40 px-5 md:px-10">
-        <div className="grid gap-10 md:grid-cols-12">
-          <div className="md:col-span-4">
-            <p className="eyebrow text-stone">Axis · {axisDetail.eyebrow.toLowerCase()}</p>
-            <h2 className="font-display mt-4 text-[clamp(2.2rem,4.5vw,4rem)] leading-[1.05]">{axisDetail.title}</h2>
-            <p className="mt-6 max-w-sm text-sm leading-relaxed text-stone">{axisDetail.text}</p>
-            <Link href="/product/axis" className="eyebrow link-line mt-10 inline-block">
-              6 сочетаний камня и основания →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 gap-4 md:col-span-8">
-            {[
-              { src: "/img/axis/studio-black.jpg", caption: "Чёрный металл" },
-              { src: "/img/axis/studio-beige.jpg", caption: "Беж металл" },
-            ].map((im, i) => (
-              <Reveal key={im.src} delay={i * 0.1}>
-                <figure>
-                  <div className="relative aspect-[4/3] overflow-hidden bg-paper-2">
-                    <Image src={im.src} alt={`Axis — ${im.caption}`} fill sizes="(min-width: 768px) 33vw, 50vw" className="object-contain p-4 mix-blend-multiply" />
-                  </div>
-                  <figcaption className="eyebrow mt-3 text-stone">{im.caption}</figcaption>
-                </figure>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Axis: 6 вариантов — закреплённая сцена на GSAP */}
+      <AxisVariants />
 
       <Slabs />
 

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/Reveal";
 import { getProduct, products } from "@/lib/products";
@@ -17,15 +16,11 @@ export async function generateMetadata({ params }: PageProps<"/product/[slug]">)
   return { title: p ? `${p.name} — ${p.type} — homeb` : "homeb", description: p?.lead };
 }
 
-export default function ProductPage({ params }: PageProps<"/product/[slug]">) {
-  return (
-    <Suspense fallback={<div className="min-h-screen" />}>
-      <Product params={params} />
-    </Suspense>
-  );
-}
+// Все модели есть в generateStaticParams, поэтому страница отдаётся сразу.
+// instant = false разрешает ждать params без <Suspense> — так неизвестный адрес получает честный 404, а не 200.
+export const instant = false;
 
-async function Product({ params }: { params: PageProps<"/product/[slug]">["params"] }) {
+export default async function ProductPage({ params }: PageProps<"/product/[slug]">) {
   const { slug } = await params;
   const product = getProduct(slug);
   if (!product) notFound();
