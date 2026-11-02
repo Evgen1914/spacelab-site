@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
 import { isStudio, rub, type Product } from "@/lib/products";
@@ -18,6 +18,22 @@ export default function ProductView({ product }: { product: Product }) {
   const [size, setSize] = useState(product.sizes[0]);
   const [zoom, setZoom] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
+  const strip = useRef<HTMLDivElement>(null); // лента фото на телефоне
+  const manyColors = !product.variants && product.colors.options.length > 1;
+
+  const pickColor = (o: (typeof product.colors.options)[number]) => {
+    setColor(o);
+    setLast("color");
+  };
+  // выбрали цвет — лента фото на телефоне возвращается к первому снимку этого цвета.
+  // Ждём конца перестройки галереи (0,6 с): иначе браузер «доводит» ленту обратно
+  // к фото, на котором она стояла, — оно переехало на новое место.
+  useEffect(() => {
+    const el = strip.current;
+    if (!el || el.scrollLeft === 0) return;
+    const t = setTimeout(() => el.scrollTo({ left: 0, behavior: "smooth" }), 650);
+    return () => clearTimeout(t);
+  }, [color]);
   const add = useCart((s) => s.add);
 
   // фото выбранного варианта или цвета идут первыми, остальные — после, чертёж в конце
@@ -51,7 +67,7 @@ export default function ProductView({ product }: { product: Product }) {
     <div className="grid pt-14 md:mt-14 md:h-[calc(100svh-3.5rem)] md:grid-cols-12 md:pt-0">
       {/* Галерея: на телефоне листается вбок, на компьютере — колонка фото */}
       <div data-lenis-prevent className="thin-scroll min-w-0 !overscroll-y-auto md:col-span-7 md:h-full md:overflow-y-auto">
-        <div className="flex snap-x snap-mandatory overflow-x-auto md:grid md:grid-cols-2 md:gap-1 md:overflow-visible">
+        <div ref={strip} className="flex snap-x snap-mandatory overflow-x-auto md:grid md:grid-cols-2 md:gap-1 md:overflow-visible">
           <AnimatePresence mode="popLayout" initial={false}>
             {gallery.map((src, i) => (
               <motion.button
@@ -82,6 +98,27 @@ export default function ProductView({ product }: { product: Product }) {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Телефон: цвета сразу под фото — видно, как меняется стул или стол */}
+      {manyColors && (
+        <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4 md:hidden">
+          <p className="eyebrow">
+            {product.colors.label} <span className="ml-1 normal-case tracking-normal text-stone">{color.name}</span>
+          </p>
+          <div className="flex gap-2">
+            {product.colors.options.map((o) => (
+              <button
+                key={o.id}
+                aria-label={o.name}
+                onClick={() => pickColor(o)}
+                className={`rounded-full p-[3px] ring-1 transition-all ${color.id === o.id ? "ring-ink" : "ring-transparent"}`}
+              >
+                <span className="block h-8 w-8 rounded-full ring-1 ring-black/10" style={{ background: o.hex }} />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Информация */}
       <div data-lenis-prevent className="thin-scroll !overscroll-y-auto px-5 pt-10 md:col-span-5 md:h-full md:overflow-y-auto md:px-12 md:pt-12 md:pb-16">
@@ -176,13 +213,15 @@ export default function ProductView({ product }: { product: Product }) {
                   })}
                 </div>
               </Option>
+              {/* на телефоне этот выбор уже стоит под фото */}
+              <div className={manyColors ? "max-md:hidden" : ""}>
               <Option label={product.colors.label} value={[color.name, color.note].filter(Boolean).join(", ")}>
                 <div className="flex gap-3">
                   {product.colors.options.map((o) => (
                     <button
                       key={o.id}
                       aria-label={o.name}
-                      onClick={() => (setColor(o), setLast("color"))}
+                      onClick={() => pickColor(o)}
                       className={`rounded-full p-[3px] ring-1 transition-all ${color.id === o.id ? "ring-ink" : "ring-transparent hover:ring-line"}`}
                     >
                       <span className="block h-8 w-8 rounded-full ring-1 ring-black/10" style={{ background: o.hex }} />
@@ -190,6 +229,7 @@ export default function ProductView({ product }: { product: Product }) {
                   ))}
                 </div>
               </Option>
+              </div>
             </>
           )}
 
