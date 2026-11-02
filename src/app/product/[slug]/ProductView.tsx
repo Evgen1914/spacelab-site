@@ -5,22 +5,27 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
-import { rub, type Product } from "@/lib/products";
+import { isStudio, rub, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ease } from "@/components/Reveal";
 
 export default function ProductView({ product }: { product: Product }) {
   const [color, setColor] = useState(product.colors.options[0]);
+  const [top, setTop] = useState(product.tops.options[0]);
   const [variant, setVariant] = useState(product.variants?.[0]);
+  // что выбрали последним — столешницу или основание: его фото показываем первыми
+  const [last, setLast] = useState<"top" | "color">("color");
   const [size, setSize] = useState(product.sizes[0]);
   const [zoom, setZoom] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
   const add = useCart((s) => s.add);
 
   // фото выбранного варианта или цвета идут первыми, остальные — после, чертёж в конце
-  const first = variant ? [variant.image] : (color.images ?? []);
-  const gallery = [...first, ...product.images.filter((i) => !first.includes(i)), product.drawing];
-  const flat = (src: string) => src === product.drawing || src === product.cutout || src.includes("/v-");
+  const picked = last === "top" ? [...(top.images ?? []), ...(color.images ?? [])] : [...(color.images ?? []), ...(top.images ?? [])];
+  const first = variant ? [variant.image] : [...new Set(picked)];
+  const gallery = [...first, ...product.images.filter((i) => !first.includes(i)), ...(product.drawing ? [product.drawing] : [])];
+  const flat = (src: string) => src === product.drawing || isStudio(src);
+  const chair = product.category === "chair";
 
   const addToCart = () => {
     const options = [
@@ -31,7 +36,7 @@ export default function ProductView({ product }: { product: Product }) {
             { label: "Основание", value: variant.base },
           ]
         : [
-            { label: "Столешница", value: product.top.name },
+            { label: product.tops.label, value: top.name },
             { label: product.colors.label, value: color.name },
           ]),
     ];
@@ -56,7 +61,7 @@ export default function ProductView({ product }: { product: Product }) {
               onClick={() => setZoom(src)}
               data-cursor="Увеличить"
               className={`relative w-[88vw] shrink-0 snap-start overflow-hidden md:w-auto ${
-                i === 0 || src === product.drawing ? "aspect-[4/5] md:col-span-2 md:aspect-[4/3]" : "aspect-[4/5]"
+                i === 0 || src === product.drawing ? `aspect-[4/5] md:col-span-2 ${chair ? "md:aspect-[5/4]" : "md:aspect-[4/3]"}` : "aspect-[4/5]"
               } ${src === product.drawing ? "bg-white" : "bg-paper-2"}`}
             >
               <Image
@@ -81,11 +86,12 @@ export default function ProductView({ product }: { product: Product }) {
             <Link href="/catalog" className="link-line">
               Каталог
             </Link>{" "}
-            / {product.name}
+            / {chair ? "Стулья" : "Столы"} / {product.name}
           </nav>
           <div className="flex items-baseline gap-4">
             <span className="eyebrow text-stone">{product.index}</span>
-            {product.badge && <span className="eyebrow bg-clay px-2 py-1 text-[10px] text-paper">Самая популярная</span>}
+            {product.badge === "Хит" && <span className="eyebrow bg-clay px-2 py-1 text-[10px] text-paper">Самая популярная</span>}
+            {product.badge === "Новинка" && <span className="eyebrow border border-ink px-2 py-0.5 text-[10px]">Новинка 2026</span>}
           </div>
           <h1 className="font-display mt-3 text-[clamp(3rem,5vw,4.5rem)] leading-none">{product.name}</h1>
           <p className="font-display mt-2 text-lg text-stone italic">{product.type}</p>
@@ -102,10 +108,10 @@ export default function ProductView({ product }: { product: Product }) {
                 {rub(size.price)}
               </motion.p>
             </AnimatePresence>
-            <span className="text-xs text-stone">за стол, без стульев</span>
+            <span className="text-xs text-stone">{product.priceNote}</span>
           </div>
 
-          <Option label="Размер, Д × Ш × В" value={size.seats}>
+          <Option label={product.sizeLabel} value={chair ? "" : size.seats}>
             <div className="border-t border-ink">
               {product.sizes.map((s) => (
                 <button
@@ -118,7 +124,7 @@ export default function ProductView({ product }: { product: Product }) {
                   <span>
                     {s.size} <span className="text-[11px] opacity-60">мм</span>
                   </span>
-                  <span className="text-xs opacity-60">{s.seats}</span>
+                  <span className="text-xs opacity-60">{chair ? `${product.colors.options.length} цвета каркаса` : s.seats}</span>
                   <span className="font-display text-base">{rub(s.price)}</span>
                 </button>
               ))}
@@ -145,14 +151,25 @@ export default function ProductView({ product }: { product: Product }) {
             </Option>
           ) : (
             <>
-              <Option label="Столешница" value={product.top.name}>
-                <div className="flex items-center gap-3">
-                  {product.top.texture && (
-                    <span className="relative block h-12 w-16 overflow-hidden ring-1 ring-line">
-                      <Image src={product.top.texture} alt="" fill sizes="64px" className="object-cover" />
-                    </span>
-                  )}
-                  <span className="font-display text-sm text-stone italic">{product.top.note}</span>
+              <Option label={product.tops.label} value={[top.name, top.note].filter(Boolean).join(", ")}>
+                <div className="flex flex-wrap gap-2">
+                  {product.tops.options.map((o) => {
+                    const one = product.tops.options.length === 1;
+                    const Tag = one ? "span" : "button";
+                    return (
+                      <Tag
+                        key={o.id}
+                        aria-label={o.name}
+                        {...(one ? {} : { onClick: () => (setTop(o), setLast("top")) })}
+                        className={`relative block h-12 w-16 overflow-hidden ring-1 ring-offset-2 ring-offset-paper transition-all ${
+                          top.id === o.id && !one ? "ring-ink" : one ? "ring-line" : "ring-transparent hover:ring-line"
+                        }`}
+                        style={o.texture ? undefined : { background: o.hex }}
+                      >
+                        {o.texture && <Image src={o.texture} alt="" fill sizes="64px" className="object-cover" />}
+                      </Tag>
+                    );
+                  })}
                 </div>
               </Option>
               <Option label={product.colors.label} value={[color.name, color.note].filter(Boolean).join(", ")}>
@@ -161,10 +178,10 @@ export default function ProductView({ product }: { product: Product }) {
                     <button
                       key={o.id}
                       aria-label={o.name}
-                      onClick={() => setColor(o)}
+                      onClick={() => (setColor(o), setLast("color"))}
                       className={`rounded-full p-[3px] ring-1 transition-all ${color.id === o.id ? "ring-ink" : "ring-transparent hover:ring-line"}`}
                     >
-                      <span className="block h-8 w-8 rounded-full ring-1 ring-black/5" style={{ background: o.hex }} />
+                      <span className="block h-8 w-8 rounded-full ring-1 ring-black/10" style={{ background: o.hex }} />
                     </button>
                   ))}
                 </div>

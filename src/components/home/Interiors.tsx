@@ -10,9 +10,12 @@ import { ease } from "../Reveal";
 
 // Интерьеры с точками на мебели (shop the look). Координаты точки — в процентах от фото.
 const looks = [
-  { image: "/img/scandi/walnut-room.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 36, y: 53 } },
+  { image: "/img/scandi/room-cover.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 50, y: 62 } },
+  { image: "/img/cono/room-gold.jpg", title: "Золото и камень", slug: "cono", dot: { x: 50, y: 66 } },
   { image: "/img/kona/room-2.jpg", title: "Светлая гостиная", slug: "kona", dot: { x: 55, y: 52 } },
-  { image: "/img/duna/top.jpg", title: "Графичная столовая", slug: "duna", dot: { x: 42, y: 45 } },
+  { image: "/img/trio/room.jpg", title: "Вечерняя столовая", slug: "trio", dot: { x: 50, y: 66 } },
+  { image: "/img/rondo/room.jpg", title: "Круглый стол", slug: "rondo", dot: { x: 50, y: 66 } },
+  { image: "/img/hora/room-2.jpg", title: "Серый минимализм", slug: "hora", dot: { x: 50, y: 62 } },
   { image: "/img/axis/black-room.jpg", title: "Спокойный графит", slug: "axis", dot: { x: 50, y: 42 } },
 ];
 
@@ -30,7 +33,7 @@ export default function Interiors() {
   const x = useTransform(scrollYProgress, (p) => -p * shift);
 
   return (
-    <section ref={ref} className="relative mt-40 h-[320vh]">
+    <section ref={ref} className="relative mt-40" style={{ height: `${120 + looks.length * 45}vh` }}>
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
         <div className="mb-10 flex items-end justify-between px-5 md:px-10">
           <h2 className="font-display text-[clamp(2.2rem,5vw,4.5rem)] leading-none">Интерьеры</h2>

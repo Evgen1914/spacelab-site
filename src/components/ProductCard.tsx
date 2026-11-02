@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatFrom, type Product } from "@/lib/products";
+import { formatFrom, isStudio, type Product } from "@/lib/products";
 
 // Карточка товара. studio — сначала стол на белом фоне (как в каталоге), при наведении — интерьер.
 // Иначе — интерьер, при наведении второе фото.
@@ -15,7 +15,8 @@ export default function ProductCard({
   sizes?: string;
   studio?: boolean;
 }) {
-  const [a, b] = studio ? [product.cutout, product.images[0]] : product.images;
+  // у стула при наведении — тот же стул в другом цвете каркаса
+  const [a, b] = studio ? [product.cutout, product.images.find((i) => i !== product.cutout)] : product.images;
   return (
     <Link href={`/product/${product.slug}`} className="group block" data-cursor="Смотреть">
       <div className={`relative overflow-hidden bg-paper-2 ${aspect}`}>
@@ -24,19 +25,30 @@ export default function ProductCard({
           alt={product.name}
           fill
           sizes={sizes}
-          className={`transition-transform duration-[1.4s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.04] ${
+          className={`transition-[transform,opacity] duration-[1.4s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.04] ${
             studio ? "object-contain p-[8%] mix-blend-multiply" : "object-cover"
-          }`}
+          } ${b && isStudio(b) ? "group-hover:opacity-0" : ""}`}
         />
         {b && (
-          <Image src={b} alt="" fill sizes={sizes} className="object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+          <Image
+            src={b}
+            alt=""
+            fill
+            sizes={sizes}
+            className={`opacity-0 transition-opacity duration-700 group-hover:opacity-100 ${
+              isStudio(b) ? "object-contain p-[8%] mix-blend-multiply" : "object-cover"
+            }`}
+          />
         )}
-        {product.badge && <span className="eyebrow absolute top-4 left-4 bg-clay px-3 py-1.5 text-paper">{product.badge}</span>}
+        {product.badge === "Хит" && <span className="eyebrow absolute top-3 left-3 bg-clay px-2.5 py-1 text-[10px] text-paper md:top-4 md:left-4">Хит</span>}
+        {product.badge === "Новинка" && (
+          <span className="eyebrow absolute top-3 left-3 bg-paper/90 px-2.5 py-1 text-[10px] md:top-4 md:left-4">Новинка</span>
+        )}
       </div>
-      <div className="mt-4 flex items-baseline justify-between gap-4">
+      <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-4">
         <div className="flex items-baseline gap-3">
           <span className="eyebrow text-stone">{product.index}</span>
-          <span className="font-display text-2xl">{product.name}</span>
+          <span className="font-display text-xl md:text-2xl">{product.name}</span>
         </div>
         <span className="text-sm whitespace-nowrap">{formatFrom(product)}</span>
       </div>

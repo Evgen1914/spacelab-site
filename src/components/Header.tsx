@@ -3,12 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
 import { useLenis } from "lenis/react";
 import { useCart } from "@/lib/cart";
 import { useMounted } from "@/lib/useMounted";
-import { products } from "@/lib/products";
+import { chairs, isStudio, tables } from "@/lib/products";
 import { ease } from "./Reveal";
 import { heroFromPath, heroVariants } from "@/lib/hero";
 
@@ -99,59 +99,88 @@ export default function Header() {
 }
 
 const links = [
-  { href: "/catalog", label: "Все столы", image: "/img/axis/black-room-2.jpg" },
-  ...products.map((p) => ({ href: `/product/${p.slug}`, label: p.name, image: p.images[0] })),
+  { href: "/catalog", label: "Столы", image: "/img/axis/black-room-2.jpg" },
+  { href: "/catalog#chairs", label: "Стулья", image: "/img/chairs/podium.jpg" },
   { href: "/catalog#prices", label: "Цены", image: "/img/duna/cross.jpg" },
   { href: "/#materials", label: "Столешницы", image: "/img/kona/column.jpg" },
   { href: "/#process", label: "Как заказать", image: "/img/scandi/walnut-top.jpg" },
+  { href: "#contacts", label: "Контакты", image: "/img/cono/room-gold.jpg" },
 ];
 
 function Menu({ close }: { close: () => void }) {
-  const [hover, setHover] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
+  const [hover, setHover] = useState(links[0].image);
   return (
     <motion.div
-      ref={ref}
       initial={{ clipPath: "inset(0 0 100% 0)" }}
       animate={{ clipPath: "inset(0 0 0% 0)" }}
       exit={{ clipPath: "inset(0 0 100% 0)" }}
       transition={{ duration: 0.8, ease }}
-      className="fixed inset-0 z-40 grid bg-paper pt-24 md:grid-cols-2"
+      data-lenis-prevent
+      className="fixed inset-0 z-40 grid overflow-y-auto bg-paper pt-20 md:grid-cols-2 md:pt-24"
     >
-      <ul className="flex flex-col justify-center gap-1 px-5 md:px-10">
-        {links.map((l, i) => (
-          <motion.li
-            key={l.href}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease, delay: 0.25 + i * 0.05 }}
-            onMouseEnter={() => setHover(i)}
-            className="flex items-baseline gap-4"
-          >
-            <span className="eyebrow w-6 text-stone">{String(i + 1).padStart(2, "0")}</span>
-            <Link
-              href={l.href}
-              onClick={close}
-              className={`font-display text-[clamp(2.2rem,5vw,4.5rem)] leading-[1.1] transition-opacity duration-300 ${
-                hover === i ? "opacity-100" : "opacity-35"
-              }`}
+      <div className="flex flex-col justify-center px-5 py-6 md:px-10">
+        <ul className="flex flex-col gap-1">
+          {links.map((l, i) => (
+            <motion.li
+              key={l.href}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease, delay: 0.25 + i * 0.05 }}
+              onMouseEnter={() => setHover(l.image)}
+              className="flex items-baseline gap-4"
             >
-              {l.label}
-            </Link>
-          </motion.li>
-        ))}
-      </ul>
+              <span className="eyebrow w-6 text-stone">{String(i + 1).padStart(2, "0")}</span>
+              <Link
+                href={l.href}
+                onClick={close}
+                className={`font-display text-[clamp(2rem,4.4vw,4rem)] leading-[1.1] transition-opacity duration-300 ${
+                  hover === l.image ? "opacity-100" : "opacity-35"
+                }`}
+              >
+                {l.label}
+              </Link>
+            </motion.li>
+          ))}
+        </ul>
+
+        {/* все модели — компактно, при наведении меняется фото справа */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-10 grid grid-cols-2 gap-8 border-t border-line pt-6 sm:grid-cols-[2fr_1fr] md:ml-10"
+        >
+          {[
+            { title: "Столы", items: tables },
+            { title: "Стулья", items: chairs },
+          ].map((g) => (
+            <div key={g.title}>
+              <p className="eyebrow mb-3 text-stone">{g.title}</p>
+              <ul className={`grid gap-x-6 gap-y-1.5 text-sm ${g.items.length > 4 ? "sm:grid-cols-2" : ""}`}>
+                {g.items.map((p) => (
+                  <li key={p.slug} onMouseEnter={() => setHover(p.images[0])}>
+                    <Link href={`/product/${p.slug}`} onClick={close} className="link-line">
+                      {p.name}
+                    </Link>
+                    {p.badge === "Новинка" && g.title === "Столы" && <span className="ml-1.5 align-super text-[9px] text-clay">new</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </motion.div>
+      </div>
       <div className="relative hidden overflow-hidden md:block">
         <AnimatePresence mode="popLayout">
           <motion.div
-            key={links[hover].image}
+            key={hover}
             initial={{ opacity: 0, scale: 1.08 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.9, ease }}
-            className="absolute inset-0"
+            className="absolute inset-0 bg-paper-2"
           >
-            <Image src={links[hover].image} alt="" fill sizes="50vw" className="object-cover" />
+            <Image src={hover} alt="" fill sizes="50vw" className={isStudio(hover) ? "object-contain p-16 mix-blend-multiply" : "object-cover"} />
           </motion.div>
         </AnimatePresence>
       </div>
