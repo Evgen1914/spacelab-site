@@ -33,7 +33,7 @@ export default function Interiors() {
     const el = track.current;
     if (!el) return;
     const max = el.scrollWidth - el.clientWidth;
-    const cards = [...el.children] as HTMLElement[];
+    const cards = [...el.querySelectorAll<HTMLElement>(":scope > figure")]; // без невидимого отступа в конце
     const pos = el.scrollLeft + cards[0].offsetLeft;
     let i = cards.findIndex((c) => c.offsetLeft + c.offsetWidth / 2 > pos);
     if (el.scrollLeft >= max - 4) i = cards.length - 1;
