@@ -14,7 +14,7 @@ import { ease } from "../Reveal";
 const looks = [
   { image: "/img/scandi/room-cover.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 52, y: 42 }, pos: "50% 85%" },
   { image: "/img/cono/room-gold.jpg", title: "Золото и камень", slug: "cono", dot: { x: 50, y: 66 } },
-  { image: "/img/kona/room-2.jpg", title: "Светлая гостиная", slug: "kona", dot: { x: 55, y: 52 } },
+  { image: "/img/kona/green.jpg", title: "Изумрудная столовая", slug: "kona", dot: { x: 46, y: 34 } },
   { image: "/img/trio/room.jpg", title: "Вечерняя столовая", slug: "trio", dot: { x: 50, y: 66 } },
   { image: "/img/rondo/room.jpg", title: "Круглый стол", slug: "rondo", dot: { x: 50, y: 43 }, pos: "50% 80%" },
   { image: "/img/hora/room-2.jpg", title: "Серый минимализм", slug: "hora", dot: { x: 50, y: 62 } },
