@@ -102,7 +102,6 @@ const links = [
   { href: "/catalog", label: "Столы", image: "/img/axis/black-room-2.jpg" },
   { href: "/catalog#chairs", label: "Стулья", image: "/img/chairs/podium.jpg" },
   { href: "/catalog#prices", label: "Цены", image: "/img/duna/cross.jpg" },
-  { href: "/#materials", label: "Столешницы", image: "/img/kona/column.jpg" },
   { href: "/#process", label: "Как заказать", image: "/img/scandi/walnut-top.jpg" },
   { href: "#contacts", label: "Контакты", image: "/img/cono/room-gold.jpg" },
 ];
