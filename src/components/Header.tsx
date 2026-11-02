@@ -10,6 +10,8 @@ import { useCart } from "@/lib/cart";
 import { useMounted } from "@/lib/useMounted";
 import { chairs, isStudio, tables } from "@/lib/products";
 import { ease } from "./Reveal";
+import { PHONE, contacts } from "@/lib/contacts";
+import { orderSteps } from "@/lib/order-steps";
 import { heroFromPath, heroVariants } from "@/lib/hero";
 
 const BIG = 0.6; // ширина большого логотипа на главной — доля ширины экрана
@@ -102,8 +104,9 @@ const links = [
   { href: "/catalog", label: "Столы", image: "/img/axis/black-room-2.jpg" },
   { href: "/catalog#chairs", label: "Стулья", image: "/img/chairs/podium.jpg" },
   { href: "/catalog#prices", label: "Цены", image: "/img/duna/cross.jpg" },
-  { href: "/#process", label: "Как заказать", image: "/img/scandi/walnut-top.jpg" },
-  { href: "#contacts", label: "Контакты", image: "/img/cono/room-gold.jpg" },
+  // вместо фото справа — схема заказа и карточка контактов
+  { href: "/#process", label: "Как заказать", image: "panel:steps" },
+  { href: "#contacts", label: "Контакты", image: "panel:contacts" },
 ];
 
 function Menu({ close }: { close: () => void }) {
@@ -171,18 +174,144 @@ function Menu({ close }: { close: () => void }) {
       </div>
       <div className="relative hidden overflow-hidden md:block">
         <AnimatePresence mode="popLayout">
-          <motion.div
-            key={hover}
-            initial={{ opacity: 0, scale: 1.08 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.9, ease }}
-            className="absolute inset-0 bg-paper-2"
-          >
-            <Image src={hover} alt="" fill sizes="50vw" className={isStudio(hover) ? "object-contain p-16 mix-blend-multiply" : "object-cover"} />
-          </motion.div>
+          {hover === "panel:steps" ? (
+            <StepsPanel key="steps" />
+          ) : hover === "panel:contacts" ? (
+            <ContactsPanel key="contacts" close={close} />
+          ) : (
+            <motion.div
+              key={hover}
+              initial={{ opacity: 0, scale: 1.08 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.9, ease }}
+              className="absolute inset-0 bg-paper-2"
+            >
+              <Image src={hover} alt="" fill sizes="50vw" className={isStudio(hover) ? "object-contain p-16 mix-blend-multiply" : "object-cover"} />
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
     </motion.div>
   );
 }
+
+// тонкие линейные иконки шагов — в цвет текста
+const stepIcons: Record<string, React.ReactNode> = {
+  choose: <path d="M3 9.5h18M4.5 9.5 6 6.5h12l1.5 3M6 9.5V19M18 9.5V19M9 13h6" />,
+  cart: <path d="M5.5 8.5h13l-1.1 10.6a1 1 0 0 1-1 .9H7.6a1 1 0 0 1-1-.9L5.5 8.5ZM9 8.5V7a3 3 0 0 1 6 0v1.5" />,
+  request: (
+    <path d="M7 3.5h10a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1ZM10 17.5h4M9 7.5h6M9 10.5h6" />
+  ),
+  delivery: (
+    <>
+      <path d="M2.5 6.5h11v10h-11zM13.5 9.5h4l3 3.2v3.8h-7" />
+      <circle cx="6.5" cy="17.5" r="1.6" />
+      <circle cx="16.5" cy="17.5" r="1.6" />
+    </>
+  ),
+};
+
+const panelIn = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.6, ease },
+};
+
+// «Как заказать»: четыре шага, соединённые линией
+function StepsPanel() {
+  return (
+    <motion.div {...panelIn} className="absolute inset-0 flex flex-col justify-center bg-paper-2 px-[9%]">
+      <p className="eyebrow text-stone">Как заказать</p>
+      <p className="font-display mt-4 text-[clamp(2rem,3.2vw,3rem)] leading-[1.05]">Четыре шага до стола</p>
+      <p className="font-display mt-2 text-stone italic">оплата — после согласования деталей</p>
+
+      <ol className="relative mt-12 space-y-8">
+        {/* линия, которая связывает шаги */}
+        <motion.span
+          aria-hidden
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          transition={{ duration: 1.1, ease, delay: 0.15 }}
+          className="absolute top-7 bottom-7 left-7 w-px origin-top bg-ink/25"
+        />
+        {orderSteps.map((st, i) => (
+          <motion.li
+            key={st.id}
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, ease, delay: 0.2 + i * 0.12 }}
+            className="relative flex items-start gap-6"
+          >
+            <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-ink/70 bg-paper-2">
+              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                {stepIcons[st.id]}
+              </svg>
+            </span>
+            <div className="pt-1.5">
+              <p className="flex items-baseline gap-3">
+                <span className="eyebrow text-stone">{String(i + 1).padStart(2, "0")}</span>
+                <span className="font-display text-2xl">{st.title}</span>
+              </p>
+              <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-stone">{st.text}</p>
+            </div>
+          </motion.li>
+        ))}
+      </ol>
+    </motion.div>
+  );
+}
+
+// «Контакты»: тёмная карточка, как последняя страница каталога
+function ContactsPanel({ close }: { close: () => void }) {
+  return (
+    <motion.div {...panelIn} className="absolute inset-0 flex flex-col justify-between bg-ink px-[9%] py-[8%] text-paper">
+      <div>
+        <p className="eyebrow opacity-60">Заказ и консультация</p>
+        <span aria-hidden className="logo mt-8 w-[min(60%,340px)] text-paper" />
+        <p className="font-display mt-4 text-lg italic opacity-70">подберём модель, размер и цвет</p>
+      </div>
+
+      <div>
+        <motion.a
+          href={contacts[0].href}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease, delay: 0.15 }}
+          className="font-display block text-[clamp(2rem,3.4vw,3.2rem)] leading-none"
+        >
+          <span className="link-line">{PHONE}</span>
+        </motion.a>
+        <ul className="mt-10 border-t border-paper/15">
+          {/* телефон уже крупно сверху — в списке остальные каналы */}
+          {contacts.slice(1).map((c, i) => (
+            <motion.li
+              key={c.label}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease, delay: 0.25 + i * 0.08 }}
+            >
+              <a
+                href={c.href}
+                target={c.href.startsWith("http") ? "_blank" : undefined}
+                rel="noreferrer"
+                onClick={close}
+                className="group flex items-baseline justify-between gap-6 border-b border-paper/15 py-4"
+              >
+                <span className="eyebrow opacity-60">{c.label}</span>
+                <span className="flex items-baseline gap-3 text-sm">
+                  <span className="opacity-80 transition-opacity group-hover:opacity-100">{c.value}</span>
+                  <span className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5">↗</span>
+                </span>
+              </a>
+            </motion.li>
+          ))}
+        </ul>
+      </div>
+
+      <p className="eyebrow opacity-40">homeb · коллекция 2026</p>
+    </motion.div>
+  );
+}
+

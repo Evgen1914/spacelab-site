@@ -7,6 +7,7 @@ import Interiors from "@/components/home/Interiors";
 import Slabs from "@/components/home/Slabs";
 import AxisVariants from "@/components/home/AxisVariants";
 import Compare from "@/components/Compare";
+import { orderSteps } from "@/lib/order-steps";
 import ProductCard from "@/components/ProductCard";
 import Reveal, { SplitLines } from "@/components/Reveal";
 import { chairs, getProduct, models, tableGroups, tables } from "@/lib/products";
@@ -17,12 +18,6 @@ const stats = [
   { value: "900–2000", text: "мм — от компактного круглого до большого овала" },
 ];
 
-const steps = [
-  { title: "Выбор", text: "Выберите модель, размер и цвет. Положите в корзину всё, что понравилось." },
-  { title: "Заявка", text: "Оставьте контакты. Заявка сразу приходит менеджеру." },
-  { title: "Детали", text: "Свяжемся с вами, поможем с размером и камнем, согласуем сроки." },
-  { title: "Доставка", text: "Привозим стол к вам домой." },
-];
 
 export default function HomeContent({ variant, preview = false }: { variant: HeroVariant; preview?: boolean }) {
   const [axis, cono, scandi, hora] = ["axis", "cono", "scandi", "hora"].map((s) => getProduct(s)!);
@@ -181,7 +176,7 @@ export default function HomeContent({ variant, preview = false }: { variant: Her
       <section id="process" className="mt-40 scroll-mt-20 px-5 md:px-10">
         <h2 className="font-display text-[clamp(2.2rem,5vw,4.5rem)] leading-none">Как заказать</h2>
         <ol className="mt-14 grid border-t border-line md:grid-cols-4">
-          {steps.map((s, i) => (
+          {orderSteps.map((s, i) => (
             <li key={s.title} className="border-b border-line py-8 md:border-r md:border-b-0 md:px-6 md:first:pl-0 md:last:border-r-0">
               <Reveal delay={i * 0.08}>
                 <span className="font-display text-5xl text-stone/50">{String(i + 1).padStart(2, "0")}</span>
