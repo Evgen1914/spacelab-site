@@ -8,13 +8,15 @@ import { formatFrom, getProduct } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ease } from "../Reveal";
 
-// Интерьеры с точками на мебели (shop the look). Координаты точки — в процентах от фото.
+// Интерьеры с точками на мебели (shop the look). Координаты точки — в процентах от видимой карточки 4:3.
+// pos — какая часть фото попадает в карточку (object-position): вертикальные и квадратные фото
+// сдвигаем вниз, чтобы стол был виден целиком, с ножками.
 const looks = [
-  { image: "/img/scandi/room-cover.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 50, y: 62 } },
+  { image: "/img/scandi/room-cover.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 52, y: 42 }, pos: "50% 85%" },
   { image: "/img/cono/room-gold.jpg", title: "Золото и камень", slug: "cono", dot: { x: 50, y: 66 } },
   { image: "/img/kona/room-2.jpg", title: "Светлая гостиная", slug: "kona", dot: { x: 55, y: 52 } },
   { image: "/img/trio/room.jpg", title: "Вечерняя столовая", slug: "trio", dot: { x: 50, y: 66 } },
-  { image: "/img/rondo/room.jpg", title: "Круглый стол", slug: "rondo", dot: { x: 50, y: 66 } },
+  { image: "/img/rondo/room.jpg", title: "Круглый стол", slug: "rondo", dot: { x: 50, y: 43 }, pos: "50% 80%" },
   { image: "/img/hora/room-2.jpg", title: "Серый минимализм", slug: "hora", dot: { x: 50, y: 62 } },
   { image: "/img/axis/black-room.jpg", title: "Спокойный графит", slug: "axis", dot: { x: 50, y: 42 } },
 ];
@@ -109,7 +111,14 @@ function Look({ look, index }: { look: (typeof looks)[number]; index: number }) 
   return (
     <figure className="relative w-[82vw] shrink-0 snap-start md:w-[46vw]">
       <div className="relative aspect-[4/3] overflow-hidden bg-paper-2">
-        <Image src={look.image} alt={look.title} fill sizes="(min-width: 768px) 46vw, 82vw" className="object-cover" />
+        <Image
+          src={look.image}
+          alt={look.title}
+          fill
+          sizes="(min-width: 768px) 46vw, 82vw"
+          className="object-cover"
+          style={"pos" in look ? { objectPosition: look.pos } : undefined}
+        />
         <button
           aria-label={`Показать ${product.name}`}
           onClick={() => setOpen((o) => !o)}
