@@ -46,42 +46,46 @@ export default function ProductView({ product }: { product: Product }) {
   };
 
   return (
-    <div className="grid pt-14 md:grid-cols-12">
+    // на компьютере — две колонки высотой в экран, каждая прокручивается сама;
+    // докрутили колонку до конца — дальше едет страница (детали, стулья к столу)
+    <div className="grid pt-14 md:mt-14 md:h-[calc(100svh-3.5rem)] md:grid-cols-12 md:pt-0">
       {/* Галерея: на телефоне листается вбок, на компьютере — колонка фото */}
-      <div className="flex snap-x snap-mandatory overflow-x-auto md:col-span-7 md:grid md:grid-cols-2 md:gap-1 md:overflow-visible">
-        <AnimatePresence mode="popLayout" initial={false}>
-          {gallery.map((src, i) => (
-            <motion.button
-              key={src}
-              layout
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease }}
-              onClick={() => setZoom(src)}
-              data-cursor="Увеличить"
-              className={`relative w-[88vw] shrink-0 snap-start overflow-hidden md:w-auto ${
-                i === 0 || src === product.drawing ? `aspect-[4/5] md:col-span-2 ${chair ? "md:aspect-[5/4]" : "md:aspect-[4/3]"}` : "aspect-[4/5]"
-              } ${src === product.drawing ? "bg-white" : "bg-paper-2"}`}
-            >
-              <Image
-                src={src}
-                alt={src === product.drawing ? `${product.name} — чертёж с размерами` : `${product.name} — фото ${i + 1}`}
-                fill
-                preload={i === 0}
-                sizes={i === 0 ? "(min-width: 768px) 58vw, 88vw" : "(min-width: 768px) 29vw, 88vw"}
-                className={
-                  src === product.drawing ? "object-contain p-8 md:p-14" : flat(src) ? "object-contain p-6 mix-blend-multiply" : "object-cover"
-                }
-              />
-            </motion.button>
-          ))}
-        </AnimatePresence>
+      <div data-lenis-prevent className="thin-scroll min-w-0 !overscroll-y-auto md:col-span-7 md:h-full md:overflow-y-auto">
+        <div className="flex snap-x snap-mandatory overflow-x-auto md:grid md:grid-cols-2 md:gap-1 md:overflow-visible">
+          <AnimatePresence mode="popLayout" initial={false}>
+            {gallery.map((src, i) => (
+              <motion.button
+                key={src}
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease }}
+                onClick={() => setZoom(src)}
+                data-cursor="Увеличить"
+                className={`relative w-[88vw] shrink-0 snap-start overflow-hidden md:w-auto ${
+                  i === 0 || src === product.drawing ? `aspect-[4/5] md:col-span-2 ${chair ? "md:aspect-[5/4]" : "md:aspect-[4/3]"}` : "aspect-[4/5]"
+                } ${src === product.drawing ? "bg-white" : "bg-paper-2"}`}
+              >
+                <Image
+                  src={src}
+                  alt={src === product.drawing ? `${product.name} — чертёж с размерами` : `${product.name} — фото ${i + 1}`}
+                  fill
+                  preload={i === 0}
+                  sizes={i === 0 ? "(min-width: 768px) 58vw, 88vw" : "(min-width: 768px) 29vw, 88vw"}
+                  className={
+                    src === product.drawing ? "object-contain p-8 md:p-14" : flat(src) ? "object-contain p-6 mix-blend-multiply" : "object-cover"
+                  }
+                />
+              </motion.button>
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Информация */}
-      <div className="px-5 pt-10 md:col-span-5 md:px-12 md:pt-16">
-        <div className="md:sticky md:top-24">
+      <div data-lenis-prevent className="thin-scroll !overscroll-y-auto px-5 pt-10 md:col-span-5 md:h-full md:overflow-y-auto md:px-12 md:pt-12 md:pb-16">
+        <div>
           <nav className="eyebrow mb-8 text-stone">
             <Link href="/catalog" className="link-line">
               Каталог

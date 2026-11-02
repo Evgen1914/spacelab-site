@@ -47,6 +47,12 @@ body {
   mask: url("/brand/homeb.png") center / contain no-repeat;
 }
 
+/* тонкая полоса прокрутки у колонок страницы товара */
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
 /* мелкие подписи в духе Zara Home */
 .eyebrow {
   font-size: 11px;
