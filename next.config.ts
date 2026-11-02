@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: root,
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    // Next.js сам предлагает обновления безопасности (next upgrade --agent=security)
+    agentUpgrade: "security",
+  },
   // картинки нарезаны заранее (npm run images) — сервер их не пережимает, а отдаёт готовые webp
   images: {
     loader: "custom",
