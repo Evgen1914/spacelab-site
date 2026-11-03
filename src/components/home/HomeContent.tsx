@@ -12,13 +12,6 @@ import ProductCard from "@/components/ProductCard";
 import Reveal, { SplitLines } from "@/components/Reveal";
 import { chairs, getProduct, models, tableGroups, tables } from "@/lib/products";
 
-const stats = [
-  { value: "12 мм", text: "керамогранит во всех моделях" },
-  { value: "750 мм", text: "высота обеденного стола у всех моделей" },
-  { value: "900–2000", text: "мм — от компактного круглого до большого овала" },
-];
-
-
 export default function HomeContent({ variant, preview = false }: { variant: HeroVariant; preview?: boolean }) {
   const [axis, cono, scandi, hora] = ["axis", "cono", "scandi", "hora"].map((s) => getProduct(s)!);
   return (
@@ -33,31 +26,6 @@ export default function HomeContent({ variant, preview = false }: { variant: Her
           <h2 className="font-display text-[clamp(2.4rem,6vw,6rem)] leading-[1.02] md:col-span-9">
             <SplitLines lines={["Разные формы —", "одна идея"]} />
           </h2>
-        </div>
-        <div className="mt-14 grid gap-10 md:grid-cols-12">
-          <Reveal className="md:col-span-5 md:col-start-4" delay={0.2}>
-            <p className="text-base leading-relaxed text-stone">
-              Столешница — спокойная и светлая, основание — с характером. Каждый стол коллекции построен на этом контрасте: гладкий камень
-              сверху и скульптурная опора снизу.
-            </p>
-            <p className="mt-4 text-base leading-relaxed text-stone">
-              Модели отличаются формой столешницы, опор и материалом основания: дерево, шпон, МДФ с рифлением, металл или нержавеющая
-              сталь. К столам — стулья из массива дуба в трёх оттенках.
-            </p>
-          </Reveal>
-          <Reveal className="md:col-span-3 md:col-start-10" delay={0.3}>
-            <Link href="/catalog" className="eyebrow link-line">
-              Вся коллекция →
-            </Link>
-          </Reveal>
-        </div>
-        <div className="mt-20 grid gap-8 border-t border-line pt-8 sm:grid-cols-3 md:ml-[25%]">
-          {stats.map((s, i) => (
-            <Reveal key={s.value} delay={i * 0.08}>
-              <p className="font-display text-[clamp(2rem,3.4vw,3.2rem)] leading-none">{s.value}</p>
-              <p className="mt-3 max-w-[200px] text-xs leading-relaxed text-stone">{s.text}</p>
-            </Reveal>
-          ))}
         </div>
       </section>
 
