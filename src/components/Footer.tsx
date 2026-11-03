@@ -66,6 +66,9 @@ export default function Footer() {
       <span aria-hidden className="logo mx-auto mt-24 mb-8 w-full max-w-[1400px] text-ink" />
       <div className="eyebrow flex flex-wrap justify-between gap-x-6 gap-y-2 border-t border-line py-5 text-stone">
         <span>© 2026 homeb</span>
+        <Link href="/privacy" className="link-line">
+          Политика конфиденциальности
+        </Link>
         <span>Обеденные столы и стулья · коллекция 2026</span>
       </div>
     </footer>

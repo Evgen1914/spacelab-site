@@ -4,6 +4,8 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import type { HeroVariant } from "@/lib/hero";
 import { ease } from "../Reveal";
+import { models, tables } from "@/lib/products";
+import { WHATSAPP } from "@/lib/contacts";
 
 export default function Hero({ variant = "c" }: { variant?: HeroVariant }) {
   if (variant === "a") return <GalleryHero />;
@@ -12,21 +14,39 @@ export default function Hero({ variant = "c" }: { variant?: HeroVariant }) {
 }
 
 function Caption({ light = true, className = "" }: { light?: boolean; className?: string }) {
+  // подпись уходит при прокрутке, чтобы не залезать под шапку
+  const { scrollY } = useScroll();
+  const fade = useTransform(scrollY, [0, 260], [1, 0]);
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1.2, ease, delay: 0.8 }}
-      className={`flex items-end justify-between ${light ? "text-paper" : "text-ink"} ${className}`}
-    >
-      <div>
-        <p className="eyebrow opacity-80">Коллекция 2026</p>
-        <p className="font-display mt-2 text-2xl italic md:text-3xl">обеденные столы</p>
-        <p className="eyebrow mt-3 opacity-70">Керамогранит · дерево · металл</p>
-      </div>
-      <a href="#collection" className="eyebrow link-line">
-        Смотреть ↓
-      </a>
+    <motion.div style={{ opacity: fade }} className={className}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, ease, delay: 0.8 }}
+        className={`flex flex-col gap-6 md:flex-row md:items-end md:justify-between ${light ? "text-paper" : "text-ink"}`}
+      >
+        <div>
+          <p className="eyebrow opacity-80">Коллекция 2026 · {models(tables.length)}</p>
+          <h1 className="font-display mt-3 max-w-2xl text-[clamp(2rem,4.4vw,4rem)] leading-[1.05]">Обеденные столы из керамогранита</h1>
+          <p className="mt-3 text-sm opacity-80 md:text-base">Дерево, металл и нержавеющая сталь · стулья к ним</p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href="#collection"
+            className={`eyebrow px-6 py-4 transition-opacity hover:opacity-85 ${light ? "bg-paper text-ink" : "bg-ink text-paper"}`}
+          >
+            Смотреть коллекцию
+          </a>
+          <a
+            href={WHATSAPP}
+            target="_blank"
+            rel="noreferrer"
+            className={`eyebrow border px-6 py-4 transition-colors ${light ? "border-paper/60 hover:bg-paper/10" : "border-ink/60 hover:bg-ink/5"}`}
+          >
+            Подобрать в WhatsApp
+          </a>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }

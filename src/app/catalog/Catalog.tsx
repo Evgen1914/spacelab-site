@@ -20,7 +20,6 @@ const filters: { id: string; label: string; test: (p: Product) => boolean }[] = 
 
 export default function Catalog() {
   const [filter, setFilter] = useState("all");
-  const [dense, setDense] = useState(false);
   const test = filters.find((f) => f.id === filter)!.test;
 
   // группы каталога; пустые после фильтра не показываем
@@ -65,16 +64,6 @@ export default function Catalog() {
             </button>
           ))}
         </div>
-        <div className="hidden shrink-0 items-center gap-3 md:flex">
-          <span className="eyebrow text-stone">Вид</span>
-          {([false, true] as const).map((d) => (
-            <button key={String(d)} onClick={() => setDense(d)} aria-label={d ? "4 в ряд" : "3 в ряд"} className={`flex gap-[3px] p-1 ${dense === d ? "opacity-100" : "opacity-30"}`}>
-              {Array.from({ length: d ? 4 : 3 }).map((_, i) => (
-                <span key={i} className="block h-3 w-[5px] bg-ink" />
-              ))}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div id="catalog-grid">
@@ -100,7 +89,7 @@ export default function Catalog() {
               {g.id === "chairs" && filter === "all" ? (
                 <ChairsBlock items={g.items} />
               ) : (
-                <Grid items={g.items} dense={dense} chairs={g.id === "chairs"} />
+                <Grid items={g.items} chairs={g.id === "chairs"} />
               )}
             </motion.section>
           ))}
@@ -111,28 +100,53 @@ export default function Catalog() {
   );
 }
 
-function Grid({ items, dense, chairs }: { items: Product[]; dense: boolean; chairs?: boolean }) {
+// Сетка без «дыр»: число колонок подбирается под количество моделей,
+// а если ряд всё равно не заполняется — первая модель встаёт широкой карточкой на две колонки.
+function layout(n: number) {
+  if (n % 4 === 0) return { cols: 4, wide: false };
+  if (n % 3 === 0) return { cols: 3, wide: false };
+  if ((n + 1) % 3 === 0) return { cols: 3, wide: true };
+  if ((n + 1) % 4 === 0) return { cols: 4, wide: true };
+  return { cols: 3, wide: false };
+}
+
+// соотношения сторон: обычная карточка и широкая (на две колонки, той же высоты).
+// Классы записаны целиком, иначе Tailwind их не найдёт.
+const ASPECT = {
+  table: { sm: "aspect-[4/3]", smWide: "aspect-[8/3]", md: "md:aspect-[4/3]", mdWide: "md:aspect-[8/3]" },
+  chair: { sm: "aspect-[4/5]", smWide: "aspect-[8/5]", md: "md:aspect-[4/5]", mdWide: "md:aspect-[8/5]" },
+};
+
+function Grid({ items, chairs }: { items: Product[]; chairs?: boolean }) {
+  const { cols, wide } = layout(items.length);
+  const A = ASPECT[chairs ? "chair" : "table"];
+  const wideMobile = items.length % 2 === 1 && items.length > 1; // на телефоне две колонки
   return (
-    <motion.div layout className={`grid grid-cols-2 gap-x-4 gap-y-12 md:gap-x-5 ${dense ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
+    <motion.div layout className={`grid grid-cols-2 gap-x-4 gap-y-12 md:gap-x-5 ${cols === 4 ? "md:grid-cols-4" : "md:grid-cols-3"}`}>
       <AnimatePresence mode="popLayout">
-        {items.map((p) => (
-          <motion.div
-            key={p.slug}
-            layout
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease }}
-            className="min-w-0"
-          >
-            <ProductCard
-              product={p}
-              studio
-              aspect={chairs ? "aspect-[4/5]" : "aspect-[4/3]"}
-              sizes={dense ? "(min-width: 768px) 25vw, 50vw" : "(min-width: 768px) 33vw, 50vw"}
-            />
-          </motion.div>
-        ))}
+        {items.map((p, i) => {
+          const big = i === 0;
+          const spanMd = big && wide;
+          const spanSm = big && wideMobile;
+          return (
+            <motion.div
+              key={p.slug}
+              layout
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7, ease }}
+              className={`min-w-0 ${spanSm ? "col-span-2" : ""} ${spanMd ? "md:col-span-2" : spanSm ? "md:col-span-1" : ""}`}
+            >
+              <ProductCard
+                product={p}
+                studio
+                aspect={`${spanSm ? A.smWide : A.sm} ${spanMd ? A.mdWide : spanSm ? A.md : ""}`}
+                sizes={spanMd ? "(min-width: 768px) 66vw, 100vw" : cols === 4 ? "(min-width: 768px) 25vw, 50vw" : "(min-width: 768px) 33vw, 50vw"}
+              />
+            </motion.div>
+          );
+        })}
       </AnimatePresence>
     </motion.div>
   );
@@ -144,7 +158,8 @@ function ChairsBlock({ items }: { items: Product[] }) {
     <div className="grid gap-5 md:grid-cols-12">
       <div className="relative aspect-[4/5] overflow-hidden bg-paper-2 md:col-span-4 md:aspect-auto">
         <Image src="/img/chairs/podium.jpg" alt="Стулья homeb" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
-        <p className="font-display absolute bottom-5 left-5 text-lg text-paper italic drop-shadow">три оттенка дерева</p>
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/55 to-transparent" />
+        <p className="font-display absolute bottom-5 left-5 text-xl text-paper italic">три оттенка дерева</p>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-12 md:col-span-8 md:grid-cols-3 md:gap-x-5">
         {items.map((p) => (

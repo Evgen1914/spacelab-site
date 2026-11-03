@@ -14,7 +14,8 @@ import { PHONE, contacts } from "@/lib/contacts";
 import { orderSteps } from "@/lib/order-steps";
 import { heroFromPath, heroVariants } from "@/lib/hero";
 
-const BIG = 0.6; // ширина большого логотипа на главной — доля ширины экрана
+// ширина большого логотипа на главной — доля ширины экрана: на телефоне крупнее, на компьютере скромнее, чтобы был виден стол
+const bigFor = (vw: number) => (vw < 768 ? 0.62 : 0.4);
 const SMALL = 96; // ширина логотипа в шапке, px
 const RATIO = 286 / 1200; // высота логотипа к ширине
 
@@ -49,6 +50,7 @@ export default function Header() {
     else lenis?.start();
   }, [menu, lenis]);
 
+  const BIG = bigFor(vw);
   // логотип: на главной огромный поверх первого экрана и сжимается в шапку при прокрутке
   const small = SMALL / (BIG * vw);
   const scale = useTransform(scrollY, [0, vh * 0.55], [1, small], { clamp: true });

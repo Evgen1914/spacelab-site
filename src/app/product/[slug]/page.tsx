@@ -14,7 +14,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/product/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const p = getProduct(slug);
-  return { title: p ? `${p.name} — ${p.type} — homeb` : "homeb", description: p?.lead };
+  if (!p) return { title: "homeb" };
+  const title = `${p.name} — ${p.type} — homeb`;
+  // превью ссылки в мессенджерах — обложка товара
+  return { title, description: p.lead, openGraph: { title, description: p.lead, images: [{ url: p.images[0] }] } };
 }
 
 // Все модели есть в generateStaticParams, поэтому страница отдаётся сразу.

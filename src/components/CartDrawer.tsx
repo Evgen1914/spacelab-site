@@ -174,6 +174,16 @@ export default function CartDrawer() {
                   </div>
                 </div>
                 <Field name="comment" label="Комментарий" textarea />
+                {/* согласие по 152-ФЗ: отдельная галочка, по умолчанию не отмечена */}
+                <label className="mb-6 flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-stone">
+                  <input type="checkbox" name="consent" required className="mt-0.5 h-4 w-4 shrink-0 accent-ink" />
+                  <span>
+                    Согласен(на) на обработку персональных данных в соответствии с{" "}
+                    <a href="/privacy" target="_blank" className="underline underline-offset-2 hover:text-ink">
+                      политикой конфиденциальности
+                    </a>
+                  </span>
+                </label>
                 {error && <p className="mb-4 text-sm text-clay">{error}</p>}
                 <button
                   disabled={step === "sending"}
@@ -181,7 +191,7 @@ export default function CartDrawer() {
                 >
                   {step === "sending" ? "Отправляем…" : "Отправить заявку"}
                 </button>
-                <p className="mt-4 text-center text-[11px] text-stone">Нажимая кнопку, вы соглашаетесь на обработку персональных данных</p>
+
               </form>
             )}
           </motion.aside>

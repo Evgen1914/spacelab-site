@@ -5,19 +5,18 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { formatFrom, getProduct } from "@/lib/products";
-import { useCart } from "@/lib/cart";
 import { ease } from "../Reveal";
 
-// Интерьеры с точками на мебели (shop the look). Координаты точки — в процентах от видимой карточки 4:3.
+// Интерьеры с точками на мебели (shop the look). Фото — не те, что на обложках в «Коллекции», чтобы не повторяться. Координаты точки — в процентах от видимой карточки 4:3.
 // pos — какая часть фото попадает в карточку (object-position): вертикальные и квадратные фото
 // сдвигаем вниз, чтобы стол был виден целиком, с ножками.
 const looks = [
-  { image: "/img/scandi/room-cover.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 52, y: 42 }, pos: "50% 85%" },
+  { image: "/img/scandi/walnut-2.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 50, y: 60 } },
   { image: "/img/cono/room-gold.jpg", title: "Золото и камень", slug: "cono", dot: { x: 50, y: 66 } },
   { image: "/img/kona/green.jpg", title: "Изумрудная столовая", slug: "kona", dot: { x: 46, y: 34 } },
   { image: "/img/trio/room.jpg", title: "Вечерняя столовая", slug: "trio", dot: { x: 50, y: 66 } },
   { image: "/img/rondo/room.jpg", title: "Круглый стол", slug: "rondo", dot: { x: 50, y: 43 }, pos: "50% 80%" },
-  { image: "/img/hora/room-2.jpg", title: "Серый минимализм", slug: "hora", dot: { x: 50, y: 62 } },
+  { image: "/img/duna/room-2.jpg", title: "Чёрное дерево", slug: "duna", dot: { x: 52, y: 50 } },
   { image: "/img/axis/black-room.jpg", title: "Спокойный графит", slug: "axis", dot: { x: 50, y: 42 } },
 ];
 
@@ -106,7 +105,6 @@ export default function Interiors() {
 function Look({ look, index }: { look: (typeof looks)[number]; index: number }) {
   const [open, setOpen] = useState(false);
   const product = getProduct(look.slug)!;
-  const add = useCart((s) => s.add);
 
   return (
     <figure className="relative w-[82vw] shrink-0 snap-start md:w-[46vw]">
@@ -137,7 +135,7 @@ function Look({ look, index }: { look: (typeof looks)[number]; index: number }) 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 12 }}
               transition={{ duration: 0.45, ease }}
-              className="absolute right-4 bottom-4 flex w-80 gap-4 bg-paper p-3"
+              className="absolute right-3 bottom-3 flex w-[min(20rem,calc(100%-1.5rem))] gap-4 bg-paper p-3 md:right-4 md:bottom-4"
             >
               <div className="relative aspect-square w-20 shrink-0 overflow-hidden bg-paper-2">
                 <Image src={product.cutout} alt="" fill sizes="80px" className="object-contain mix-blend-multiply" />
@@ -145,24 +143,10 @@ function Look({ look, index }: { look: (typeof looks)[number]; index: number }) 
               <div className="flex flex-col">
                 <span className="font-display text-lg leading-tight">{product.name}</span>
                 <span className="text-[11px] text-stone">{formatFrom(product)}</span>
-                <div className="mt-auto flex gap-4 pt-2 whitespace-nowrap">
-                  <Link href={`/product/${product.slug}`} className="eyebrow link-line">
-                    Подробнее
-                  </Link>
-                  <button
-                    onClick={() =>
-                      add({
-                        slug: product.slug,
-                        name: product.name,
-                        image: product.cutout,
-                        options: [{ label: "Вариант", value: "как на фото" }],
-                      })
-                    }
-                    className="eyebrow link-line"
-                  >
-                    В корзину
-                  </button>
-                </div>
+                {/* без «В корзину»: стулья на фото не из нашей коллекции, «как на фото» вводило бы в заблуждение */}
+                <Link href={`/product/${product.slug}`} className="eyebrow link-line mt-auto self-start pt-2">
+                  Выбрать размер и цвет →
+                </Link>
               </div>
             </motion.div>
           )}

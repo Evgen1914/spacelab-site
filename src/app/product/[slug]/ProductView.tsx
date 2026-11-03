@@ -5,13 +5,16 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
-import { isStudio, rub, type Product } from "@/lib/products";
+import { isStudio, rub, type Product, type Swatch } from "@/lib/products";
 import { useCart } from "@/lib/cart";
+import { WHATSAPP } from "@/lib/contacts";
 import { ease } from "@/components/Reveal";
 
 export default function ProductView({ product }: { product: Product }) {
-  const [color, setColor] = useState(product.colors.options[0]);
-  const [top, setTop] = useState(product.tops.options[0]);
+  // по умолчанию выбран тот вариант, что на обложке товара, — страница открывается тем же фото, что на карточке
+  const byCover = (opts: Swatch[]) => opts.find((o) => o.images?.[0] === product.images[0]) ?? opts[0];
+  const [color, setColor] = useState(() => byCover(product.colors.options));
+  const [top, setTop] = useState(() => byCover(product.tops.options));
   const [variant, setVariant] = useState(product.variants?.[0]);
   // что выбрали последним — столешницу или основание: его фото показываем первыми
   const [last, setLast] = useState<"top" | "color">("color");
@@ -149,7 +152,7 @@ export default function ProductView({ product }: { product: Product }) {
                 {rub(size.price)}
               </motion.p>
             </AnimatePresence>
-            <span className="text-xs text-stone">{product.priceNote}</span>
+            <span className="text-sm text-ink/70">{product.priceNote}</span>
           </div>
 
           <Option label={product.sizeLabel} value={chair ? "" : size.seats}>
@@ -247,6 +250,15 @@ export default function ProductView({ product }: { product: Product }) {
               </motion.span>
             </AnimatePresence>
           </button>
+          {/* для дорогой мебели многие сначала хотят спросить — сообщение уже с моделью и размером */}
+          <a
+            href={`${WHATSAPP}?text=${encodeURIComponent(`Здравствуйте! Хочу уточнить про ${product.name}, ${size.size}.`)}`}
+            target="_blank"
+            rel="noreferrer"
+            className="eyebrow mt-3 block w-full border border-ink/70 py-5 text-center transition-colors hover:bg-ink/5"
+          >
+            Спросить в WhatsApp
+          </a>
           <p className="mt-3 text-center text-xs text-stone">Оплата после согласования деталей с менеджером</p>
 
           <div className="mt-12 border-t border-line">

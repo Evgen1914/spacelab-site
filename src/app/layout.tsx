@@ -10,9 +10,15 @@ import CursorLabel from "@/components/CursorLabel";
 const playfair = Playfair_Display({ variable: "--font-playfair", subsets: ["latin", "cyrillic"], style: ["normal", "italic"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin", "cyrillic"] });
 
+const description =
+  "Обеденные столы из керамогранита: 9 моделей — прямоугольные, овальные и круглые, на опорах из дерева, металла и нержавеющей стали. Стулья из массива дуба к ним.";
+
 export const metadata: Metadata = {
-  title: "homeb — обеденные столы",
-  description: "Обеденные столы homeb: керамогранит, дерево, металл. Scandi, Duna, Kona и Axis — коллекция 2026.",
+  // адрес сайта для ссылок-превью в мессенджерах; при переезде на свой домен — задать SITE_URL в Dokploy
+  metadataBase: new URL(process.env.SITE_URL ?? "http://spacelab-spacelabsite-xlrs8s-1baa44-84-54-59-240.traefik.me"),
+  title: "homeb — обеденные столы из керамогранита",
+  description,
+  openGraph: { siteName: "homeb", locale: "ru_RU", type: "website", title: "homeb — обеденные столы из керамогранита", description },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
