@@ -42,10 +42,10 @@ export default function HomeContent({ variant, preview = false }: { variant: Her
             <ProductCard product={axis} aspect="aspect-[4/3]" sizes="(min-width: 768px) 58vw, 100vw" />
           </Reveal>
           <Reveal className="md:col-span-4 md:col-start-9 md:mt-48" delay={0.1}>
-            <ProductCard product={cono} sizes="(min-width: 768px) 33vw, 100vw" />
+            <ProductCard product={cono} sizes="(min-width: 768px) 56vw, 167vw" />
           </Reveal>
           <Reveal className="md:col-span-4 md:col-start-2">
-            <ProductCard product={hora} sizes="(min-width: 768px) 33vw, 100vw" />
+            <ProductCard product={hora} sizes="(min-width: 768px) 56vw, 167vw" />
           </Reveal>
           <Reveal className="md:col-span-6 md:col-start-7 md:mt-32" delay={0.1}>
             <ProductCard product={scandi} aspect="aspect-square" sizes="(min-width: 768px) 50vw, 100vw" />
