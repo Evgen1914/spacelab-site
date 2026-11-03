@@ -11,7 +11,7 @@ import { ease } from "../Reveal";
 // pos — какая часть фото попадает в карточку (object-position): вертикальные и квадратные фото
 // сдвигаем вниз, чтобы стол был виден целиком, с ножками.
 const looks = [
-  { image: "/img/scandi/walnut-2.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 50, y: 60 } },
+  { image: "/img/scandi/oak-room.jpg", title: "Тёплый минимализм", slug: "scandi", dot: { x: 44, y: 36 }, pos: "50% 75%" },
   { image: "/img/cono/room-gold.jpg", title: "Золото и камень", slug: "cono", dot: { x: 50, y: 66 } },
   { image: "/img/kona/green.jpg", title: "Изумрудная столовая", slug: "kona", dot: { x: 46, y: 34 } },
   { image: "/img/trio/room.jpg", title: "Вечерняя столовая", slug: "trio", dot: { x: 50, y: 66 } },

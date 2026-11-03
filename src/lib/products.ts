@@ -87,15 +87,12 @@ export const products: Product[] = [
     materials: ["ceramic", "wood"],
     cutout: img("scandi", "cutout"),
     images: [
-      img("scandi", "room-cover"),
-      img("scandi", "walnut-room"),
-      img("scandi", "studio"),
-      img("scandi", "walnut-top"),
-      img("scandi", "walnut-leg"),
-      img("scandi", "black-room"),
-      img("scandi", "light-1"),
-      img("scandi", "light-2"),
-      img("scandi", "black-2"),
+      img("scandi", "dark-cover"),
+      img("scandi", "dark-leg"),
+      img("scandi", "dark-studio"),
+      img("scandi", "walnut-studio"),
+      img("scandi", "oak-room"),
+      img("scandi", "oak-studio"),
     ],
     drawing: "/img/scandi/drawing.svg",
     sizes: [rect(1400, 800, 50160), rect(1600, 800, 53040), rect(1800, 900, 56520)],
@@ -103,14 +100,14 @@ export const products: Product[] = [
     colors: {
       label: "Основание",
       options: [
+        { id: "walnut", name: "Орех", hex: "#7b5537", images: [img("scandi", "walnut-studio")] },
         {
-          id: "walnut",
-          name: "Орех",
-          hex: "#7b5537",
-          images: [img("scandi", "room-cover"), img("scandi", "walnut-room"), img("scandi", "studio"), img("scandi", "walnut-leg")],
+          id: "black",
+          name: "Чёрное дерево",
+          hex: "#1f1c19",
+          images: [img("scandi", "dark-cover"), img("scandi", "dark-leg"), img("scandi", "dark-studio")],
         },
-        { id: "black", name: "Чёрное дерево", hex: "#1f1c19", images: [img("scandi", "black-room"), img("scandi", "black-2")] },
-        { id: "light", name: "Светлое дерево", hex: "#d9c4a3", images: [img("scandi", "light-1"), img("scandi", "light-2")] },
+        { id: "light", name: "Светлое дерево", hex: "#d9c4a3", images: [img("scandi", "oak-room"), img("scandi", "oak-studio")] },
       ],
     },
     specs: [
@@ -123,8 +120,8 @@ export const products: Product[] = [
       title: "Тёплое дерево, холодный камень",
       text: "Деревянное основание контрастирует со светлой столешницей. Такое сочетание подходит и к скандинавскому интерьеру, и к строгому минимализму.",
       images: [
-        { src: img("scandi", "walnut-leg"), caption: "Опора-ветвь, орех" },
-        { src: img("scandi", "black-room"), caption: "Чёрное дерево в интерьере" },
+        { src: img("scandi", "dark-leg"), caption: "Опора-ветвь крупно" },
+        { src: img("scandi", "oak-room"), caption: "Светлое дерево в интерьере" },
       ],
     },
   },
@@ -596,11 +593,15 @@ export const models = (n: number) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "�
 
 // Фото предмета на белом фоне: их показываем целиком (object-contain) и «растворяем» в фоне страницы.
 const STUDIO = new Set([
-  "scandi/studio", "axis/studio-black", "axis/studio-beige",
+  "axis/studio-black", "axis/studio-beige",
   "terra/light", "terra/warm", "terra/light-angle", "terra/warm-angle",
   "trio/black", "trio/gold", "cono/black", "cono/gold", "cono/beige", "cono/black-front",
   "rondo/angle", "rondo/side", "hora/gold", "hora/dark",
 ]);
+// Широкие кадры (16:9): в галерее товара идут во всю ширину и не обрезаются.
+const WIDE = new Set(["scandi/dark-studio", "scandi/walnut-studio", "scandi/oak-studio"]);
+export const isWide = (src: string) => WIDE.has(src.replace(/^\/img\//, "").replace(/\.\w+$/, ""));
+
 export const isStudio = (src: string) => {
   const key = src.replace(/^\/img\//, "").replace(/\.\w+$/, "");
   return key.endsWith("/cutout") || key.startsWith("axis/v-") || STUDIO.has(key) || (key.startsWith("chairs/") && /-(walnut|black|oak)$/.test(key));

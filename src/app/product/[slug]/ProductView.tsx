@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useLenis } from "lenis/react";
-import { isStudio, rub, type Product, type Swatch } from "@/lib/products";
+import { isStudio, isWide, rub, type Product, type Swatch } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { WHATSAPP } from "@/lib/contacts";
 import { ease } from "@/components/Reveal";
@@ -70,7 +70,7 @@ export default function ProductView({ product }: { product: Product }) {
     <div className="grid pt-14 md:mt-14 md:h-[calc(100svh-3.5rem)] md:grid-cols-12 md:pt-0">
       {/* Галерея: на телефоне листается вбок, на компьютере — колонка фото */}
       <div data-lenis-prevent className="thin-scroll min-w-0 !overscroll-y-auto md:col-span-7 md:h-full md:overflow-y-auto">
-        <div ref={strip} className="flex snap-x snap-mandatory overflow-x-auto md:grid md:grid-cols-2 md:gap-1 md:overflow-visible">
+        <div ref={strip} className="flex snap-x snap-mandatory overflow-x-auto md:grid md:grid-flow-dense md:grid-cols-2 md:gap-1 md:overflow-visible">
           <AnimatePresence mode="popLayout" initial={false}>
             {gallery.map((src, i) => (
               <motion.button
@@ -83,7 +83,11 @@ export default function ProductView({ product }: { product: Product }) {
                 onClick={() => setZoom(src)}
                 data-cursor="Увеличить"
                 className={`relative w-[88vw] shrink-0 snap-start overflow-hidden md:w-auto ${
-                  i === 0 || src === product.drawing ? `aspect-[4/5] md:col-span-2 ${chair ? "md:aspect-[5/4]" : "md:aspect-[4/3]"}` : "aspect-[4/5]"
+                  i === 0 || src === product.drawing
+                    ? `aspect-[4/5] md:col-span-2 ${chair ? "md:aspect-[5/4]" : "md:aspect-[4/3]"}`
+                    : isWide(src)
+                      ? "aspect-[4/5] md:col-span-2 md:aspect-[16/9]"
+                      : "aspect-[4/5]"
                 } ${src === product.drawing ? "bg-white" : "bg-paper-2"}`}
               >
                 <Image
@@ -91,9 +95,15 @@ export default function ProductView({ product }: { product: Product }) {
                   alt={src === product.drawing ? `${product.name} — чертёж с размерами` : `${product.name} — фото ${i + 1}`}
                   fill
                   preload={i === 0}
-                  sizes={i === 0 ? "(min-width: 768px) 58vw, 88vw" : "(min-width: 768px) 29vw, 88vw"}
+                  sizes={i === 0 || isWide(src) ? "(min-width: 768px) 58vw, 88vw" : "(min-width: 768px) 29vw, 88vw"}
                   className={
-                    src === product.drawing ? "object-contain p-8 md:p-14" : flat(src) ? "object-contain p-6 mix-blend-multiply" : "object-cover"
+                    src === product.drawing
+                      ? "object-contain p-8 md:p-14"
+                      : flat(src)
+                        ? "object-contain p-6 mix-blend-multiply"
+                        : isWide(src)
+                          ? "object-contain md:object-cover" // на телефоне в плитке 4:5 — целиком, без обрезки ножек
+                          : "object-cover"
                   }
                 />
               </motion.button>
