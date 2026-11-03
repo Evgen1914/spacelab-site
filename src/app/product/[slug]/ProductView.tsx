@@ -12,7 +12,7 @@ import { ease } from "@/components/Reveal";
 
 export default function ProductView({ product }: { product: Product }) {
   // по умолчанию выбран тот вариант, что на обложке товара, — страница открывается тем же фото, что на карточке
-  const byCover = (opts: Swatch[]) => opts.find((o) => o.images?.[0] === product.images[0]) ?? opts[0];
+  const byCover = (opts: Swatch[]) => opts.find((o) => o.images?.includes(product.images[0])) ?? opts[0];
   const [color, setColor] = useState(() => byCover(product.colors.options));
   const [top, setTop] = useState(() => byCover(product.tops.options));
   const [variant, setVariant] = useState(product.variants?.[0]);
@@ -83,10 +83,10 @@ export default function ProductView({ product }: { product: Product }) {
                 onClick={() => setZoom(src)}
                 data-cursor="Увеличить"
                 className={`relative w-[88vw] shrink-0 snap-start overflow-hidden md:w-auto ${
-                  i === 0 || src === product.drawing
-                    ? `aspect-[4/5] md:col-span-2 ${chair ? "md:aspect-[5/4]" : "md:aspect-[4/3]"}`
-                    : isWide(src)
-                      ? "aspect-[4/5] md:col-span-2 md:aspect-[16/9]"
+                  isWide(src)
+                    ? "aspect-[4/5] md:col-span-2 md:aspect-[16/9]"
+                    : i === 0 || src === product.drawing
+                      ? `aspect-[4/5] md:col-span-2 ${chair ? "md:aspect-[5/4]" : "md:aspect-[4/3]"}`
                       : "aspect-[4/5]"
                 } ${src === product.drawing ? "bg-white" : "bg-paper-2"}`}
               >

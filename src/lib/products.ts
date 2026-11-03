@@ -105,9 +105,9 @@ export const products: Product[] = [
           id: "black",
           name: "Чёрное дерево",
           hex: "#1f1c19",
-          images: [img("scandi", "dark-cover"), img("scandi", "dark-leg"), img("scandi", "dark-studio")],
+          images: [img("scandi", "dark-studio"), img("scandi", "dark-cover"), img("scandi", "dark-leg")],
         },
-        { id: "light", name: "Светлое дерево", hex: "#d9c4a3", images: [img("scandi", "oak-room"), img("scandi", "oak-studio")] },
+        { id: "light", name: "Светлое дерево", hex: "#d9c4a3", images: [img("scandi", "oak-studio"), img("scandi", "oak-room")] },
       ],
     },
     specs: [
