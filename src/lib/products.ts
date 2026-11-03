@@ -356,6 +356,7 @@ export const products: Product[] = [
     materials: ["ceramic", "metal"],
     cutout: img("cono", "cutout"),
     images: [
+      img("cono", "room-bronze"),
       img("cono", "room-gold"),
       img("cono", "black"),
       img("cono", "room-black"),
@@ -377,7 +378,7 @@ export const products: Product[] = [
       label: "Основание",
       options: [
         { ...black, note: "нерж. сталь", images: [img("cono", "room-black"), img("cono", "black"), img("cono", "black-front")] },
-        { ...bronze, note: "нерж. сталь", images: [img("cono", "room-beige"), img("cono", "beige")] },
+        { ...bronze, note: "нерж. сталь", images: [img("cono", "room-bronze"), img("cono", "room-beige"), img("cono", "beige")] },
         { ...gold, note: "нерж. сталь", images: [img("cono", "room-gold"), img("cono", "gold")] },
       ],
     },
