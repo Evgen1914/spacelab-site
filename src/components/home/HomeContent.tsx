@@ -143,29 +143,6 @@ export default function HomeContent({ variant, preview = false }: { variant: Her
         </ul>
       </section>
 
-      {/* Реальные фото */}
-      <section className="mt-40 px-5 md:px-10">
-        <div className="grid gap-10 md:grid-cols-12">
-          <div className="md:col-span-4">
-            <p className="eyebrow text-stone">Без ретуши</p>
-            <h2 className="font-display mt-4 text-[clamp(2rem,4vw,3.6rem)] leading-[1.05]">Так столы выглядят у наших клиентов</h2>
-          </div>
-          {/* на телефоне — лента вбок, фото крупно; третий снимок обрезан: без людей и коробок в кадре */}
-          <div
-            data-lenis-prevent-horizontal
-            className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 [scrollbar-width:none] md:col-span-8 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0"
-          >
-            {["/img/kona/client-1.jpg", "/img/kona/client-2.jpg", "/img/kona/client-3-crop.jpg"].map((src, i) => (
-              <Reveal key={src} delay={i * 0.1} className={`w-[72vw] shrink-0 snap-start md:w-auto ${i === 1 ? "md:mt-16" : ""}`}>
-                <div className="relative aspect-[3/4] overflow-hidden bg-paper-2">
-                  <Image src={src} alt="Стол Kona у клиента" fill sizes="(min-width: 768px) 22vw, 72vw" className="object-cover" />
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Как заказать */}
       <section id="process" className="mt-40 scroll-mt-20 px-5 md:px-10">
         <h2 className="font-display text-[clamp(2.2rem,5vw,4.5rem)] leading-none">Как заказать</h2>

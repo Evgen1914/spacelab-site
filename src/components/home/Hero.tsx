@@ -59,7 +59,7 @@ function PhotoHero() {
     <section className="relative h-[100svh] overflow-hidden bg-ink">
       <motion.div className="absolute inset-0" style={{ y }}>
         <motion.div className="absolute inset-0" initial={{ scale: 1.15 }} animate={{ scale: 1 }} transition={{ duration: 2.4, ease }}>
-          <Image src="/img/kona/room.jpg" alt="Стол Kona в интерьере" fill preload sizes="100vw" className="object-cover object-[50%_65%]" />
+          <Image src="/img/scandi/dark-room.jpg" alt="Стол Scandi в интерьере" fill preload sizes="100vw" className="object-cover object-[50%_72%] md:object-[50%_56%]" />
         </motion.div>
       </motion.div>
       <div className="absolute inset-0 bg-ink/30" />
