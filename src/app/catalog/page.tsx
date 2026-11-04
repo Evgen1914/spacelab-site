@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Compare from "@/components/Compare";
 import Catalog from "./Catalog";
 
 export const metadata: Metadata = {
@@ -8,10 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function CatalogPage() {
-  return (
-    <>
-      <Catalog />
-      <Compare className="mt-40" />
-    </>
-  );
+  return <Catalog />;
 }

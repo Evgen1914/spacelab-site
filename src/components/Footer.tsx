@@ -39,11 +39,6 @@ export default function Footer() {
           <p className="eyebrow mt-8 mb-5 text-stone">Ещё</p>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/catalog#prices" className="link-line">
-                Цены
-              </Link>
-            </li>
-            <li>
               <Link href="/#process" className="link-line">
                 Как заказать
               </Link>

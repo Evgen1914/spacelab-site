@@ -105,7 +105,6 @@ export default function Header() {
 const links = [
   { href: "/catalog", label: "Столы", image: "/img/axis/black-room-2.jpg" },
   { href: "/catalog#chairs", label: "Стулья", image: "/img/chairs/podium.jpg" },
-  { href: "/catalog#prices", label: "Цены", image: "/img/duna/cross.jpg" },
   // вместо фото справа — схема заказа и карточка контактов
   { href: "/#process", label: "Как заказать", image: "panel:steps" },
   { href: "#contacts", label: "Контакты", image: "panel:contacts" },
